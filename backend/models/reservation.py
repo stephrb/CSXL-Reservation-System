@@ -1,12 +1,12 @@
 """Reservations are the data object to keep track of user reservations"""
 
 from pydantic import BaseModel
-from sqlalchemy.types import DateTime
+from datetime import datetime
 from . import User, Reservable
 
 class Reservation(BaseModel):
     id: int | None = None
-    start_time: DateTime
-    end_time: DateTime
+    start_time: datetime
+    end_time: datetime
     reservable: Reservable
     user: User
