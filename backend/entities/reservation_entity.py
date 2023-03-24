@@ -2,7 +2,7 @@ from sqlalchemy import Integer, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Self
 from .entity_base import EntityBase
-from ..models import Reservation, Reservable
+from ..models import Reservation
 from .user_entity import UserEntity
 from .reservable_entity import ReservableEntity
 
@@ -25,16 +25,12 @@ class ReservationEntity(EntityBase):
         return cls(
             id=model.id,
             start_time=model.start_time,
-            end_time=model.end_time,
-            reservable=model.reservable,
-            user=model.user
+            end_time=model.end_time
         )
 
     def to_model(self) -> Reservation:
         return Reservation(
             id=self.id,
             start_time=self.start_time,
-            end_time=self.end_time,
-            reservable=self.reservable,
-            user=self.user
+            end_time=self.end_time
         )
