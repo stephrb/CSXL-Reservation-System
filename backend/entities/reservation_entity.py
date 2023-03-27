@@ -1,32 +1,36 @@
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, ForeignKey, DateTime
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Self
-from sqlalchemy.types import DateTime
 from .entity_base import EntityBase
-from ..models import Reservation, Reservable, User
+from ..models import Reservation
+from .user_entity import UserEntity
+from .reservable_entity import ReservableEntity
 
 class ReservationEntity(EntityBase):
     __tablename__ = "reservation"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
     start_time: Mapped[DateTime] = mapped_column(DateTime, index=True)
-    end_time: Mapped[DateTime] = mapped_column(DateTime, index=True)
-    reservable: Mapped[Reservable] = mapped_column(Reservable, index=True)
-    user: Mapped[User] = mapped_column(User, index=True)
+    end_time: Mapped[DateTime] = mapped_column(DateTime)
+
+    reservable_id: Mapped[int] = mapped_column(ForeignKey('reservable.id'), index=True)
+    reservable: Mapped[ReservableEntity] = relationship()
+
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), index=True)
+    user: Mapped[UserEntity] = relationship()
 
     @classmethod
-    def from_model(cls, model: Reservable) -> Self:
+    def from_model(cls, model: Reservation) -> Self:
         return cls(
             id=model.id,
-            name=model.name,
-            type=model.type,
-            description=model.description,
+            start_time=model.start_time,
+            end_time=model.end_time
         )
 
-    def to_model(self) -> Reservable:
-        return Reservable(
+    def to_model(self) -> Reservation:
+        return Reservation(
             id=self.id,
-            name=self.name,
-            type=self.type,
-            description=self.description
+            start_time=self.start_time,
+            end_time=self.end_time
         )
