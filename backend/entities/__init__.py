@@ -17,6 +17,8 @@ from .entity_base import EntityBase
 from .user_entity import UserEntity
 from .role_entity import RoleEntity
 from .permission_entity import PermissionEntity
+from .reservable_entity import ReservableEntity
+from .reservation_entity import ReservationEntity
 from .user_role_entity import user_role_table
 
 
