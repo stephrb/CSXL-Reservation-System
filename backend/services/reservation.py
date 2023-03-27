@@ -20,7 +20,7 @@ class ReservationService:
     def list_user_reservations(self, user: User, pagination_params: PaginationParams, op: operator) -> Paginated[Reservation] | None:
 
         statement = select(ReservationEntity).where(ReservationEntity.user_id == user.id).where(op(ReservationEntity.start_time, datetime.now()))
-        length_statement = select(func.count()).select_from(ReservationEntity).where(ReservationEntity.user_id == user.id)
+        length_statement = select(func.count()).select_from(ReservationEntity).where(ReservationEntity.user_id == user.id).where(op(ReservationEntity.start_time, datetime.now()))
         
         offset = pagination_params.page * pagination_params.page_size
         limit = pagination_params.page_size
