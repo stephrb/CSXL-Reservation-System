@@ -1,10 +1,12 @@
 from fastapi import Depends
-from sqlalchemy import select
+from sqlalchemy import select, or_, func
 from sqlalchemy.orm import Session
 from ..database import db_session
-from ..models import Reservation, User
+from ..models import Reservation, User, PaginationParams, Paginated
 from ..entities import ReservationEntity
 from .permission import PermissionService
+from datetime import datetime
+import operator
 
 class ReservationService:
     
@@ -15,11 +17,22 @@ class ReservationService:
         self._session = session
         self._permission = permission
 
-    def list(self, user: User) -> list[Reservation] | None:
-        query = select(ReservationEntity).where(ReservationEntity.user_id == user.id)
-        reservation_list = self._session.scalars(query)
-        if reservation_list is None:
-            return None
-        else:
-            model = [reservation.to_model() for reservation in reservation_list]
-            return model
+    def list_user_reservations(self, user: User, pagination_params: PaginationParams, op: operator) -> Paginated[Reservation] | None:
+
+        statement = select(ReservationEntity).where(ReservationEntity.user_id == user.id).where(op(ReservationEntity.start_time, datetime.now()))
+        length_statement = select(func.count()).select_from(ReservationEntity).where(ReservationEntity.user_id == user.id).where(op(ReservationEntity.start_time, datetime.now()))
+        
+        offset = pagination_params.page * pagination_params.page_size
+        limit = pagination_params.page_size
+
+        if pagination_params.order_by != '':
+            statement = statement.order_by(
+                getattr(ReservationEntity, pagination_params.order_by))
+
+        statement = statement.offset(offset).limit(limit)
+
+        length = self._session.execute(length_statement).scalar()
+        entities = self._session.execute(statement).scalars()
+
+        return Paginated(items=[entity.to_model() for entity in entities], length=length, params=pagination_params)
+    
