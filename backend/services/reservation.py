@@ -6,6 +6,7 @@ from ..models import Reservation, User, PaginationParams, Paginated
 from ..entities import ReservationEntity
 from .permission import PermissionService
 from datetime import datetime
+from operator import ge, lt
 import operator
 
 class ReservationService:
@@ -17,7 +18,8 @@ class ReservationService:
         self._session = session
         self._permission = permission
 
-    def list_user_reservations(self, user: User, pagination_params: PaginationParams, op: operator) -> Paginated[Reservation] | None:
+    
+    def list_user_reservations_private(self, user: User, pagination_params: PaginationParams, op: operator) -> Paginated[Reservation] | None:
 
         statement = select(ReservationEntity).where(ReservationEntity.user_id == user.id).where(op(ReservationEntity.start_time, datetime.now()))
         length_statement = select(func.count()).select_from(ReservationEntity).where(ReservationEntity.user_id == user.id).where(op(ReservationEntity.start_time, datetime.now()))
@@ -36,3 +38,9 @@ class ReservationService:
 
         return Paginated(items=[entity.to_model() for entity in entities], length=length, params=pagination_params)
     
+
+    def list_user_reservations(self, user: User, pagination_params: PaginationParams, upcoming: bool) -> Paginated[Reservation] | None:
+        if upcoming:
+            return self.list_user_reservations_private(user, pagination_params, ge)
+        else:
+            return self.list_user_reservations_private(user, pagination_params, lt)
