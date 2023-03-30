@@ -9,17 +9,13 @@
         <thead>
             <td>Date</td>
             <td>Time</td>
-            <td>Item</td>
-            <td>Type</td>
-            <td>Description</td>
+            <td>Reservation Id</td>
         </thead>
         <tbody>
             <tr *ngFor="let reservation of userReservations$ | async">
                 <td>{{ reservation.start_time | date: 'mediumDate'}}  </td>
                 <td>{{ reservation.start_time | date: 'shortTime' }} - {{ reservation.end_time | date: 'shortTime' }}</td>
-                <td>{{ reservation.reservable.name }}</td>
-                <td>{{ reservation.reservable.type }}</td>
-                <td>{{ reservation.reservable.description }}</td>
+                <td>{{ reservation.id }}</td>
             </tr>
         </tbody>
     </table>
