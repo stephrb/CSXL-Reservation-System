@@ -18,7 +18,4 @@ def list_user_reservations(
      pagination_params = PaginationParams(
         page=page, page_size=page_size, order_by=order_by, filter="")
      
-     if upcoming:
-        return res_svc.list_user_reservations(subject, pagination_params, ge)
-     else:
-         return res_svc.list_user_reservations(subject, pagination_params, lt)
+     return res_svc.list_user_reservations(subject, pagination_params, upcoming)
