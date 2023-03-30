@@ -1,5 +1,28 @@
 <mat-tab-group>
-    <mat-tab label="Reserve"> Here, you can make a reservation for a room or equipment. </mat-tab>
-    <mat-tab label="My Reservations"> Current Reservations </mat-tab>
+    <mat-tab label="Reserve"> 
+      <h2>Reserve Open Rooms and Equipment</h2>
+      <body>Here, you can make a reservation for a room or equipment.</body>
+    </mat-tab>
+    <mat-tab label="My Reservations"> 
+      <h2>My Upcoming Reservations</h2>
+      <table>
+        <thead>
+            <td>Date</td>
+            <td>Time</td>
+            <td>Item</td>
+            <td>Type</td>
+            <td>Description</td>
+        </thead>
+        <tbody>
+            <tr *ngFor="let reservation of userReservations$ | async">
+                <td>{{ reservation.start_time | date: 'mediumDate'}}  </td>
+                <td>{{ reservation.start_time | date: 'shortTime' }} - {{ reservation.end_time | date: 'shortTime' }}</td>
+                <td>{{ reservation.reservable.name }}</td>
+                <td>{{ reservation.reservable.type }}</td>
+                <td>{{ reservation.reservable.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+    </mat-tab>
   </mat-tab-group>
   
