@@ -25,7 +25,7 @@ export class ReservationService {
   constructor(private http: HttpClient) { }
 
   getUserReservations(): Observable<Reservation[]> {
-    return this.http.get<Reservation[]>("/api/reservations").pipe(map((reservations: Reservation[]) => reservations.map(reservation => {
+    return this.http.get<Reservation[]>("/api/reservation").pipe(map((reservations: Reservation[]) => reservations.map(reservation => {
       return {  id: reservation.id,
                 start_time: new Date(reservation.start_time),
                 end_time:  new Date(reservation.end_time), 
