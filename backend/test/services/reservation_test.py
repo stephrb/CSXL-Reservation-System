@@ -45,13 +45,13 @@ def setup_teardown(test_session: Session):
 def reservation_service(test_session: Session):
     return ReservationService(test_session)
 
-def test_one_reservation(reservation_service: ReservationService):
+def test_single_reservation(reservation_service: ReservationService):
     assert reservation_service.list_user_reservations(user=student, pagination_params=pagination_params, upcoming=True).items[0] == reservation
 
-def test_no_reservations(reservation_service: ReservationService):
+def test_zero_reservations(reservation_service: ReservationService):
     assert len(reservation_service.list_user_reservations(user=root, pagination_params=pagination_params, upcoming=True).items) == 0
 
-def test_previous_reservations_do_not_exist(reservation_service: ReservationService):
+def test_reservation_history(reservation_service: ReservationService):
     assert len(reservation_service.list_user_reservations(user=student, pagination_params=pagination_params, upcoming=False).items) == 0
 
 def test_reservation_order(reservation_service: ReservationService):
