@@ -57,3 +57,7 @@ def test_reservation_history(reservation_service: ReservationService):
 def test_reservation_order(reservation_service: ReservationService):
     res_list = reservation_service.list_user_reservations(user=student, pagination_params=pagination_params, upcoming=True).items
     assert res_list[0].start_time < res_list[1].start_time
+
+def test_get_reservable(reservation_service: ReservationService):
+    assert reservation_service.get_reservable(reservation.id) == reservable
+    assert reservation_service.get_reservable(reservation_2.id) == reservable

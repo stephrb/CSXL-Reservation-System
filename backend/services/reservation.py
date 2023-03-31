@@ -2,8 +2,8 @@ from fastapi import Depends
 from sqlalchemy import select, or_, func
 from sqlalchemy.orm import Session
 from ..database import db_session
-from ..models import Reservation, User, PaginationParams, Paginated
-from ..entities import ReservationEntity
+from ..models import Reservation, User, PaginationParams, Paginated, Reservable
+from ..entities import ReservationEntity, ReservableEntity
 from .permission import PermissionService
 from datetime import datetime
 from operator import ge, lt
@@ -44,3 +44,8 @@ class ReservationService:
             return self.list_user_reservations_private(user, pagination_params, ge)
         else:
             return self.list_user_reservations_private(user, pagination_params, lt)
+        
+    def get_reservable(self, id: int) -> Reservable:
+        statement = select(ReservableEntity).join(ReservationEntity).where(ReservationEntity.id==id)
+        entity = self._session.scalar(statement)
+        return entity.to_model()
