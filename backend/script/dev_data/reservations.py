@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 time_1 = datetime.now() + timedelta(days = 6)
 time_1 = time_1.replace(hour=15, minute=0, second=0, microsecond=0)
 
-time_2 = datetime.now() + timedelta(days = 6)
+time_2 = datetime.now() + timedelta(days = 5)
 time_2 = time_1.replace(hour=12, minute=0, second=0, microsecond=0)
 
 res_1 =  Reservation(id=1,
