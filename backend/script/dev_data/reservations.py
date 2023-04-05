@@ -23,7 +23,7 @@ res_3 = Reservation(id=3,
                      )
 res_4 = Reservation(id=4, 
                      start_time=time_2, 
-                     end_time=time_2 + + timedelta(hours=2)
+                     end_time=time_2 + timedelta(hours=2)
                      )
 
 triplets = [
