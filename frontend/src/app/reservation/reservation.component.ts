@@ -33,4 +33,10 @@ export class ReservationComponent {
     component: ReservationComponent, 
     title: 'Reservation', 
   };
+
+  onClick(reservation: Reservation) {
+    this.reservationService.deleteReservation(reservation.id)
+    console.log(reservation.id)
+  }
 }
+

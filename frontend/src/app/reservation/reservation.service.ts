@@ -46,4 +46,9 @@ export class ReservationService {
   getReservable(reservation_id: number): Observable<Reservable> {
     return this.http.get<Reservable>("/api/reservation/" +  reservation_id);
   }
+
+  deleteReservation(reservation_id: number): Observable<void> {
+    console.log("Service")
+    return this.http.delete<void>("/api/reservation/" + reservation_id)
+}
 }

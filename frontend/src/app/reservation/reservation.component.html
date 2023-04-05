@@ -12,6 +12,7 @@
           <td>Reservation</td>
           <td>Type</td>
           <td>Description</td>
+          <td>Delete</td>
       </thead>
       <tbody>
           <tr *ngFor="let reservation of userReservations$ | async">
@@ -20,6 +21,10 @@
               <td>{{ reservation.reservable.name }}</td>
               <td>{{ reservation.reservable.type }}</td>
               <td>{{ reservation.reservable.description }}</td>
+              <td> <button type="button" (click)="onClick(reservation)" mat-icon-button color="warn" aria-label="Delete button">
+                <mat-icon>delete</mat-icon>
+              </button>
+              </td>
           </tr>
       </tbody>
   </table>
