@@ -61,3 +61,13 @@ def test_reservation_order(reservation_service: ReservationService):
 def test_get_reservable(reservation_service: ReservationService):
     assert reservation_service.get_reservable(reservation.id) == reservable
     assert reservation_service.get_reservable(reservation_2.id) == reservable
+
+
+def test_get_reservation(reservation_service: ReservationService):
+    assert reservation_service.get_reservation(1) == reservation
+    assert reservation_service.get_reservation(3) == None
+
+def test_delete_reservation(reservation_service: ReservationService):
+    assert reservation_service.get_reservation(2) == reservation_2
+    reservation_service.delete_reservation(2)
+    assert reservation_service.get_reservation(2) == None
