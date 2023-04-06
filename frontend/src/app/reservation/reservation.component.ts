@@ -35,8 +35,23 @@ export class ReservationComponent {
   };
 
   onClick(reservation: Reservation) {
-    this.reservationService.deleteReservation(reservation.id)
-    console.log(reservation.id)
+    if (window.confirm("You are about to delete your reservation for " + reservation.reservable.name + " on " 
+    + reservation.start_time.toLocaleString() + " - " + reservation.end_time.toLocaleTimeString())) {
+      this.reservationService
+                .deleteReservation(reservation.id)
+                  .subscribe({
+                  next: () =>  { this.userReservations$ = this.reservationService.getUserReservations(); },
+                  error: (err) => this.onError(err)
+                 });
+    }
+  }
+
+  private onError(err: Error) {
+    if (err.message) {
+      window.alert(err.message);
+    } else {
+      window.alert("Unknown error: " + JSON.stringify(err));
+    }
   }
 }
 
