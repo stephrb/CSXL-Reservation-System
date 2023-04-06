@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Route } from '@angular/router'
 import { Observable } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
@@ -18,7 +18,7 @@ export class ReservationComponent {
   public adminPermission$: Observable<boolean>;
   public userReservations$: Observable<Reservation[]>;
 
-  constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService
+  constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef
   ){{
     this.profile$ = profileService.profile$;
     this.checkinPermission$ = this.permission.check('checkin.create', 'checkin/');
@@ -36,13 +36,16 @@ export class ReservationComponent {
 
   onClick(reservation: Reservation) {
     if (window.confirm("You are about to delete your reservation for " + reservation.reservable.name + " on " 
-    + reservation.start_time.toLocaleString() + " - " + reservation.end_time.toLocaleTimeString())) {
+      + reservation.start_time.toLocaleString() + " - " + reservation.end_time.toLocaleTimeString())) {
       this.reservationService
-                .deleteReservation(reservation.id)
-                  .subscribe({
-                  next: () =>  { this.userReservations$ = this.reservationService.getUserReservations(); },
-                  error: (err) => this.onError(err)
-                 });
+        .deleteReservation(reservation.id)
+        .subscribe({
+          next: () => {
+            this.userReservations$ = this.reservationService.getUserReservations();
+            this.cd.detectChanges(); // Trigger change detection manually
+          },
+          error: (err) => this.onError(err)
+        });
     }
   }
 
