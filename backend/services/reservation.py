@@ -1,11 +1,11 @@
 from fastapi import Depends
-from sqlalchemy import select, or_, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.orm import Session
 from ..database import db_session
 from ..models import Reservation, User, PaginationParams, Paginated, Reservable
 from ..entities import ReservationEntity, ReservableEntity
 from .permission import PermissionService
-from datetime import datetime
+from datetime import datetime, timedelta
 from operator import ge, lt
 import operator
 
@@ -45,7 +45,25 @@ class ReservationService:
         else:
             return self.list_user_reservations_private(user, pagination_params, lt)
         
-    def get_reservable(self, id: int) -> Reservable:
-        statement = select(ReservableEntity).join(ReservationEntity).where(ReservationEntity.id==id)
+    def get_reservable(self, reservation_id: int) -> Reservable | None:
+        statement = select(ReservableEntity).join(ReservationEntity).where(ReservationEntity.id==reservation_id)
         entity = self._session.scalar(statement)
-        return entity.to_model()
+        if entity:
+            return entity.to_model()
+    
+    def get_reservation(self, reservation_id: int) -> Reservation | None:
+        statement = select(ReservationEntity).where(ReservationEntity.id==reservation_id)
+        entity = self._session.scalar(statement)
+        if entity:
+            return entity.to_model()
+
+    def delete_reservation(self, reservation_id: int) -> None:
+        statement = delete(ReservationEntity).where(ReservationEntity.id==reservation_id)
+        self._session.execute(statement)
+        self._session.commit()
+
+    def get_reservations_by_reservable(self, reservable_id: int, date: datetime) -> list[Reservation] | None:
+        statement = select(ReservationEntity).where(ReservationEntity.reservable_id == reservable_id)\
+        .filter(ReservationEntity.start_time >= date, ReservationEntity.start_time < date + timedelta(days=1))
+        entities = self._session.scalars(statement)
+        return [entity.to_model() for entity in entities]
