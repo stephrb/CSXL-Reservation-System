@@ -1,7 +1,30 @@
 <mat-tab-group>
   <mat-tab label="Reserve"> 
     <h2>Reserve Open Rooms and Equipment</h2>
-    <body>Here, you can make a reservation for a room or equipment.</body>
+    <table>
+      <thead>
+        <tr>
+          <td>Name</td>
+          <ng-container *ngFor="let hour of hours">
+            <td>{{ hour }}</td>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let reservable of reservables$ | async">
+          <td>{{ reservable.name }}</td>
+          <ng-container *ngFor="let reservation of userReservations$ | async">
+            <ng-container *ngIf="reservable.name === reservation.reservable.name">
+              <ng-container *ngFor="let hour of hours">
+                <td *ngIf="isReserved(reservation, hour)" class="notAvailable"></td>
+                <td *ngIf="!isReserved(reservation, hour)" class="available"></td>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+    
   </mat-tab>
   <mat-tab label="My Reservations"> 
     <h2>My Upcoming Reservations</h2>

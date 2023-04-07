@@ -46,4 +46,38 @@ export class ReservationService {
   getReservable(reservation_id: number): Observable<Reservable> {
     return this.http.get<Reservable>("/api/reservation/" +  reservation_id);
   }
+
+  getListReservables(): Observable<Reservable[]> {
+    return this.http.get<Reservable[]>("/api/reservable")
+  }
+
+  hasReservation(reservable: Reservable): Observable<boolean> {
+    return this.getUserReservations().pipe(
+      map((reservations: Reservation[]) =>
+        reservations.some((r: Reservation) => r.reservable.name === reservable.name)
+      )
+    );
+  }
+
+  isReserved(reservation: Reservation, hour: string): boolean{
+    const reservationStartTime = new Date(reservation.start_time);
+    const reservationEndTime = new Date(reservation.end_time);
+  
+    const hourStartTime = new Date(reservationStartTime);
+    const hourString = hour.slice(-2).toUpperCase();
+    const hourValue = parseInt(hour.slice(0, 2), 10);
+    if (hourString === "PM" && hourValue !== 12) {
+      hourStartTime.setHours(hourValue + 12, 0, 0, 0);
+    } else if (hourString === "AM" && hourValue === 12) {
+      hourStartTime.setHours(0, 0, 0, 0);
+    } else {
+      hourStartTime.setHours(hourValue, 0, 0, 0);
+    }
+  
+    const hourEndTime = new Date(hourStartTime);
+    hourEndTime.setHours(hourEndTime.getHours() + 1);
+  
+    return (reservationStartTime < hourEndTime) && (reservationEndTime > hourStartTime);
+  }
+  
 }
