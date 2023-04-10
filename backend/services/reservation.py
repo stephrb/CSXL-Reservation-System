@@ -1,5 +1,5 @@
 from fastapi import Depends
-from sqlalchemy import select, or_, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.orm import Session
 from ..database import db_session
 from ..models import Reservation, User, PaginationParams, Paginated, Reservable
@@ -45,7 +45,19 @@ class ReservationService:
         else:
             return self.list_user_reservations_private(user, pagination_params, lt)
         
-    def get_reservable(self, id: int) -> Reservable:
-        statement = select(ReservableEntity).join(ReservationEntity).where(ReservationEntity.id==id)
+    def get_reservable(self, reservation_id: int) -> Reservable | None:
+        statement = select(ReservableEntity).join(ReservationEntity).where(ReservationEntity.id==reservation_id)
         entity = self._session.scalar(statement)
-        return entity.to_model()
+        if entity:
+            return entity.to_model()
+    
+    def get_reservation(self, reservation_id: int) -> Reservation | None:
+        statement = select(ReservationEntity).where(ReservationEntity.id==reservation_id)
+        entity = self._session.scalar(statement)
+        if entity:
+            return entity.to_model()
+
+    def delete_reservation(self, reservation_id: int) -> None:
+        statement = delete(ReservationEntity).where(ReservationEntity.id==reservation_id)
+        self._session.execute(statement)
+        self._session.commit()
