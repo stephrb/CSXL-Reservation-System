@@ -29,7 +29,7 @@ export class ReservationComponent {
     this.checkinPermission$ = this.permission.check('checkin.create', 'checkin/');
     this.adminPermission$ = this.permission.check('admin.view', 'admin/');
     this.userReservations$ = this.reservationService.getUserReservations();
-    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDate())
+    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
   }
   public static Route: Route = {
     path: 'reservation',
@@ -65,10 +65,7 @@ export class ReservationComponent {
   onDateChange(event: any) {
     this.selectedDate = event.value;
     this.hours = this.getHours(this.selectedDate);
-    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(
-      this.selectedDate.getFullYear(), 
-      this.selectedDate.getMonth(), 
-      this.selectedDate.getDate())
+    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
   }
 
 }

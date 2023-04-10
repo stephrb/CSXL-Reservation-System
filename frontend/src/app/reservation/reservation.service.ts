@@ -51,20 +51,17 @@ export class ReservationService {
     return this.http.get<Reservable[]>("/api/reservable")
   }
 
-  getAvailability(reservable_id: number, year: number, month: number, day: number): Observable<Reservation[]> {
-    let params = new HttpParams()
-    .set('year', year.toString())
-    .set('month', month.toString())
-    .set('day', day.toString());
+  getAvailability(reservable_id: number, date: Date): Observable<Reservation[]> {
+    let params = new HttpParams().set('date', date.toISOString());
   let url = "/api/reservation/availability/" + reservable_id;
   return this.http.get<Reservation[]>(url, { params });
   }
 
-  getReservablesWithAvailability(year: number, month: number, day: number): Observable<{ reservable: Reservable, reservations: Reservation[] }[]> {
+  getReservablesWithAvailability(date: Date): Observable<{ reservable: Reservable, reservations: Reservation[] }[]> {
     return this.getListReservables().pipe(
       switchMap(reservables => {
         const availabilityObservables = reservables.map(reservable => {
-          return this.getAvailability(reservable.id, year, month + 1, day).pipe(
+          return this.getAvailability(reservable.id, date).pipe(
             map(reservations => {
               return { reservable, reservations };
             })
