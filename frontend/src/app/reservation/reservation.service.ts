@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams} from '@angular/common/http';
 import { Observable, map, switchMap, forkJoin} from 'rxjs';
 import { Paginated } from '../pagination';
 
@@ -51,8 +51,28 @@ export class ReservationService {
     return this.http.get<Reservable[]>("/api/reservable")
   }
 
-    getAvailability(reservable_id: number, year: number, month: number, day: number): Observable<Reservation[]> {
-      return this.http.get<Reservation[]>("/api/reservation/" + reservable_id + year + month + day)
-    }
+  getAvailability(reservable_id: number, year: number, month: number, day: number): Observable<Reservation[]> {
+    let params = new HttpParams()
+    .set('year', year.toString())
+    .set('month', month.toString())
+    .set('day', day.toString());
+  let url = "/api/reservation/availability/" + reservable_id;
+  return this.http.get<Reservation[]>(url, { params });
+  }
+
+  getReservablesWithAvailability(year: number, month: number, day: number): Observable<{ reservable: Reservable, reservations: Reservation[] }[]> {
+    return this.getListReservables().pipe(
+      switchMap(reservables => {
+        const availabilityObservables = reservables.map(reservable => {
+          return this.getAvailability(reservable.id, year, month + 1, day).pipe(
+            map(reservations => {
+              return { reservable, reservations };
+            })
+          );
+        });
+        return forkJoin(availabilityObservables);
+      })
+    );
+}
   
 }
