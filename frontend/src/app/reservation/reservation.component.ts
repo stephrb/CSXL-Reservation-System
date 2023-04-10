@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
 import { Reservation, ReservationService, Reservable } from './reservation.service';
 import { PermissionService } from '../permission.service';
+import { map } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-reservation',
@@ -13,6 +15,7 @@ import { PermissionService } from '../permission.service';
 
 export class ReservationComponent {
 
+  public selectedDate: Date = new Date();
   public hours: string[] = [];
   public profile$: Observable<Profile | undefined>;
   public checkinPermission$: Observable<boolean>;
@@ -49,14 +52,21 @@ export class ReservationComponent {
     return hours;
 }
 
+isAvailable(reservable_id: number, year: number, month: number, day: number, hour: number): Observable<boolean> {
+  return this.reservationService.getAvailability(reservable_id, year, month, day).pipe(
+    map(reservations => {
+      return !reservations.some(reservation => {
+        const startTime = new Date(reservation.start_time);
+        const endTime = new Date(reservation.end_time);
+        return startTime.getHours() <= hour && hour < endTime.getHours();
+      });
+    })
+  );
+}
 
-  hasReservation(reservable: any): Observable<boolean> {
-    return this.reservationService.hasReservation(reservable);
-  }
-  
+onDateChange(event: any) {
+  this.selectedDate = event.value;
+  this.reservables$ = this.reservationService.getListReservables();
+}
 
-  isReserved(reservation: Reservation, hour: string): boolean {
-    return this.reservationService.isReserved(reservation, hour);
-  }
-  
 }

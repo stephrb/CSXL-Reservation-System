@@ -1,6 +1,15 @@
 <mat-tab-group>
   <mat-tab label="Reserve"> 
     <h2>Reserve Open Rooms and Equipment</h2>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Choose a date</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    
     <table>
       <thead>
         <tr>
@@ -10,20 +19,18 @@
           </ng-container>
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let reservable of reservables$ | async">
           <td>{{ reservable.name }}</td>
-          <ng-container *ngFor="let reservation of userReservations$ | async">
-            <ng-container *ngIf="reservable.name === reservation.reservable.name">
-              <ng-container *ngFor="let hour of hours">
-                <td *ngIf="isReserved(reservation, hour)" class="notAvailable"></td>
-                <td *ngIf="!isReserved(reservation, hour)" class="available"></td>
-              </ng-container>
-            </ng-container>
+          <ng-container *ngFor="let hour of hours">
+            <td *ngIf="!isAvailable(reservable.id, selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), +hour)" class="notAvailable"></td>
+            <td *ngIf="isAvailable(reservable.id, selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), +hour)" class="available"></td>
           </ng-container>
         </tr>
-      </tbody>
+      </tbody>      
     </table>
+    
     
   </mat-tab>
   <mat-tab label="My Reservations"> 
