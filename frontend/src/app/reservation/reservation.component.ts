@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Route } from '@angular/router'
 import { Observable } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
@@ -22,7 +22,7 @@ export class ReservationComponent {
   public userReservations$: Observable<Reservation[]>;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
 
-  constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService
+  constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef
   ){
     this.hours = this.getHours(new Date());  
     this.profile$ = profileService.profile$;
@@ -36,6 +36,29 @@ export class ReservationComponent {
     component: ReservationComponent, 
     title: 'Reservation', 
   };
+
+  onClick(reservation: Reservation) {
+    if (window.confirm("You are about to delete your reservation for " + reservation.reservable.name + " on " 
+      + reservation.start_time.toLocaleString() + " - " + reservation.end_time.toLocaleTimeString())) {
+      this.reservationService
+        .deleteReservation(reservation.id)
+        .subscribe({
+          next: () => {
+            this.userReservations$ = this.reservationService.getUserReservations();
+            this.cd.detectChanges(); // Trigger change detection manually
+          },
+          error: (err) => this.onError(err)
+        });
+    }
+  }
+
+  private onError(err: Error) {
+    if (err.message) {
+      window.alert(err.message);
+    } else {
+      window.alert("Unknown error: " + JSON.stringify(err));
+    }
+  }
 
   getHours(date: Date): Date[] {
     const start = new Date(date.getFullYear(), date.getMonth(), date.getDate()); 
@@ -69,3 +92,4 @@ export class ReservationComponent {
   }
 
 }
+
