@@ -16,3 +16,12 @@ table {
   h2{
     text-align: center;
   }
+
+  .available {
+    background-color: green;
+  }
+
+  .notAvailable {
+    background-color: red;
+  }
+

@@ -1,7 +1,38 @@
 <mat-tab-group>
   <mat-tab label="Reserve"> 
     <h2>Reserve Open Rooms and Equipment</h2>
-    <body>Here, you can make a reservation for a room or equipment.</body>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Choose a date</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    
+    <table>
+      <thead>
+        <tr>
+          <td>Name</td>
+          <ng-container *ngFor="let hour of hours">
+            <td>{{ hour | date:'shortTime'}}</td>
+          </ng-container>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngFor="let reservable of reservablesWithAvailability$ | async">
+          <tr>
+            <td>{{ reservable.reservable.name }}</td>
+            <ng-container *ngFor="let hour of hours">
+              <td *ngIf="!isAvailable(reservable.reservations, hour, reservable)" class="notAvailable"></td>
+              <td *ngIf="isAvailable(reservable.reservations, hour, reservable)" class="available"></td>
+            </ng-container>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    
   </mat-tab>
   <mat-tab label="My Reservations"> 
     <h2>My Upcoming Reservations</h2>

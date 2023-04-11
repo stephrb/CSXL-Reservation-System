@@ -24,6 +24,9 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { FormsModule } from '@angular/forms'; // Import FormsModule here
 
 /* Application Specific */
 import { AppRoutingModule } from './app-routing.module';
@@ -66,6 +69,9 @@ import { ReservationComponent } from './reservation/reservation.component';
     MatSnackBarModule,
     MatTabsModule,
     MatToolbarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    FormsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: () => {
