@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from ..services import ReservationService
-from ..models import Reservation, User, Paginated, PaginationParams, Reservable
+from ..models import Reservation, User, Paginated, PaginationParams, Reservable, ReservationForm
 from .authentication import registered_user
 from datetime import datetime
 
@@ -28,6 +28,14 @@ def get_reservable(reservation_id: int, res_svc: ReservationService = Depends())
 def delete_reservation(reservation_id: int, res_svc: ReservationService = Depends()):
      res_svc.delete_reservation(reservation_id)
 
-@api.get("/availability/{reservable_id}", tags=["Reservations"])
+@api.get("/availability/{reservable_id}", response_model=list[Reservation], tags=["Reservations"])
 def get_availability(reservable_id: int, date:datetime, res_svc: ReservationService = Depends()):
-     return res_svc.get_reservations_by_reservable(reservable_id, datetime(date.year, date.month, date.day))
+     return res_svc.get_reservations_by_reservable(reservable_id, date)
+
+@api.post("", response_model=Reservation, tags=['Reservations'])
+def create_reservation(
+     reservationForm: ReservationForm,
+     subject: User = Depends(registered_user), 
+     res_svc: ReservationService = Depends()):
+     reservation = res_svc.create_reservation(reservationForm, subject.id)
+     return reservation
