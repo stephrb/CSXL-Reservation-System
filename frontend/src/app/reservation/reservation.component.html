@@ -10,28 +10,31 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     
-    <table>
-      <thead>
-        <tr>
-          <td>Name</td>
-          <ng-container *ngFor="let hour of hours">
-            <td>{{ hour | date:'shortTime'}}</td>
-          </ng-container>
-        </tr>
-      </thead>
-
-      <tbody>
-        <ng-container *ngFor="let reservable of reservablesWithAvailability$ | async">
+    <div class="table-container">
+      <table class="table">
+        <thead>
           <tr>
-            <td>{{ reservable.reservable.name }}</td>
+            <td class="name">Name</td>
             <ng-container *ngFor="let hour of hours">
-              <td *ngIf="!isAvailable(reservable.reservations, hour, reservable)" class="notAvailable"></td>
-              <td *ngIf="isAvailable(reservable.reservations, hour, reservable)" class="available"></td>
+              <td>{{ hour | date:'shortTime'}}</td>
             </ng-container>
           </tr>
-        </ng-container>
-      </tbody>
-    </table>
+        </thead>
+  
+        <tbody>
+          <ng-container *ngFor="let reservable of reservablesWithAvailability$ | async">
+            <tr>
+              <td class="name">{{ reservable.reservable.name }}</td>
+              <ng-container *ngFor="let hour of hours">
+                <td *ngIf="!isAvailable(reservable.reservations, hour, reservable)" class="notAvailable"></td>
+                <td *ngIf="isAvailable(reservable.reservations, hour, reservable)" class="available"></td>
+              </ng-container>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+    
     
   </mat-tab>
   <mat-tab label="My Reservations"> 
@@ -58,6 +61,68 @@
               </td>
           </tr>
       </tbody>
+  </table>
+  </mat-tab>
+
+  <mat-tab *ngIf="adminPermission$ | async" label="Admin">
+    <mat-card>
+      <mat-card-header>
+          <mat-card-title>Add a Reservable</mat-card-title>
+      </mat-card-header>
+      <ng-template #registration>
+          <mat-card-header>
+              <mat-card-title>Welcome to CSXL! Please verify and complete your profile below.</mat-card-title>
+              <mat-card-subtitle>
+                  Once your profile is setup you will be able to take advantage of CSXL initiatives such as
+                  enrolling in workshops, reserving a desk during coworking hours, and more!
+              </mat-card-subtitle>
+          </mat-card-header>
+      </ng-template>
+      <mat-card-content>
+        <div style="display: block;">
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Jane" formControlName="first_name" name="first_name" required>
+          </mat-form-field>
+        </div>
+        <div style="display: block;">
+          <mat-form-field appearance="fill">
+            <mat-label>Type</mat-label>
+            <input matInput placeholder="Doe" formControlName="last_name" name="last_name" required>
+          </mat-form-field>
+        </div>
+        <div style="display: block;">
+          <mat-form-field appearance="fill">
+            <mat-label>Description</mat-label>
+            <input matInput type="email" placeholder="jane.doe@unc.edu" formControlName="email" name="email" required>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+          <button mat-raised-button type="submit">SAVE</button>
+      </mat-card-actions>
+  </mat-card>
+
+  <table>
+    <thead>
+      <td>Name</td>
+      <td>Type</td>
+      <td>Description</td>
+      <td>Delete</td>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let reservable of listReservables$ | async">
+          <td>{{ reservable.name}}  </td>
+          <td>{{ reservable.type}}  </td>
+          <td>{{ reservable.description }}</td>
+          <td class="delete"> <button type="button" mat-icon-button color="warn" aria-label="Delete button">
+            <mat-icon>delete</mat-icon>
+          </button>
+          </td>
+      </tr>
+  </tbody>
   </table>
   </mat-tab>
 </mat-tab-group>

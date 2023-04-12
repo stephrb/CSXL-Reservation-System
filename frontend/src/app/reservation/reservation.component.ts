@@ -20,6 +20,7 @@ export class ReservationComponent {
   public checkinPermission$: Observable<boolean>;
   public adminPermission$: Observable<boolean>;
   public userReservations$: Observable<Reservation[]>;
+  public listReservables$: Observable<Reservable[]>;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
 
   constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef
@@ -29,6 +30,7 @@ export class ReservationComponent {
     this.checkinPermission$ = this.permission.check('checkin.create', 'checkin/');
     this.adminPermission$ = this.permission.check('admin.view', 'admin/');
     this.userReservations$ = this.reservationService.getUserReservations();
+    this.listReservables$ = this.reservationService.getListReservables();
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
   }
   public static Route: Route = {
@@ -45,7 +47,7 @@ export class ReservationComponent {
         .subscribe({
           next: () => {
             this.userReservations$ = this.reservationService.getUserReservations();
-            this.cd.detectChanges(); // Trigger change detection manually
+            this.cd.detectChanges(); 
           },
           error: (err) => this.onError(err)
         });
