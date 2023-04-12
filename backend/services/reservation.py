@@ -5,7 +5,7 @@ from ..database import db_session
 from ..models import Reservation, User, PaginationParams, Paginated, Reservable
 from ..entities import ReservationEntity, ReservableEntity
 from .permission import PermissionService
-from datetime import datetime
+from datetime import datetime, timedelta
 from operator import ge, lt
 import operator
 
@@ -61,3 +61,9 @@ class ReservationService:
         statement = delete(ReservationEntity).where(ReservationEntity.id==reservation_id)
         self._session.execute(statement)
         self._session.commit()
+
+    def get_reservations_by_reservable(self, reservable_id: int, date: datetime) -> list[Reservation] | None:
+        statement = select(ReservationEntity).where(ReservationEntity.reservable_id == reservable_id)\
+        .filter(ReservationEntity.start_time >= date, ReservationEntity.start_time < date + timedelta(days=1))
+        entities = self._session.scalars(statement)
+        return [entity.to_model() for entity in entities]
