@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy import select, func, delete
 from sqlalchemy.orm import Session
 from ..database import db_session
-from ..models import Reservation, User, PaginationParams, Paginated, Reservable
+from ..models import Reservation, User, PaginationParams, Paginated, Reservable, ReservationForm
 from ..entities import ReservationEntity, ReservableEntity
 from .permission import PermissionService
 from datetime import datetime, timedelta
@@ -62,8 +62,21 @@ class ReservationService:
         self._session.execute(statement)
         self._session.commit()
 
-    def get_reservations_by_reservable(self, reservable_id: int, date: datetime) -> list[Reservation] | None:
+    def get_reservations_by_reservable(self, reservable_id: int, date: datetime) -> list[Reservation]:
+        date = datetime(date.year, date.month, date.day)
         statement = select(ReservationEntity).where(ReservationEntity.reservable_id == reservable_id)\
         .filter(ReservationEntity.start_time >= date, ReservationEntity.start_time < date + timedelta(days=1))
         entities = self._session.scalars(statement)
         return [entity.to_model() for entity in entities]
+    
+    def create_reservation(self, reservation_form: ReservationForm, user_id: int) -> Reservation:
+        reservation_entity = ReservationEntity.from_form_model(reservation_form)
+        reservations_on_day = self.get_reservations_by_reservable(reservation_form.reservable_id, reservation_form.start_time)
+        for reservation in reservations_on_day:
+            if reservation.start_time < reservation_form.end_time and reservation_form.start_time < reservation.end_time:
+                raise ValueError(f'New reservation with start_time: {reservation_form.start_time} and end_time: {reservation_form.end_time} overlaps with existing reservation from {reservation.start_time} to {reservation.end_time}')
+        reservation_entity.user_id = user_id
+        self._session.add(reservation_entity)
+        self._session.commit()
+
+        return reservation_entity.to_model()
