@@ -26,7 +26,8 @@
             <td>{{ reservable.reservable.name }}</td>
             <ng-container *ngFor="let hour of hours">
               <td *ngIf="!isAvailable(reservable.reservations, hour, reservable)" class="notAvailable"></td>
-              <td *ngIf="isAvailable(reservable.reservations, hour, reservable)" class="available"></td>
+              <td *ngIf="isValidDate(hour) && isAvailable(reservable.reservations, hour, reservable)" class="available" (click) = "onCellClick()"></td>
+              <td *ngIf="!isValidDate(hour)" class="invalidDate"></td>
             </ng-container>
           </tr>
         </ng-container>
@@ -52,7 +53,7 @@
               <td>{{ reservation.reservable.name }}</td>
               <td>{{ reservation.reservable.type }}</td>
               <td>{{ reservation.reservable.description }}</td>
-              <td> <button type="button" (click)="onClick(reservation)" mat-icon-button color="warn" aria-label="Delete button">
+              <td> <button type="button" (click)="onDeleteClick(reservation)" mat-icon-button color="warn" aria-label="Delete button">
                 <mat-icon>delete</mat-icon>
               </button>
               </td>
