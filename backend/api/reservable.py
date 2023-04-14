@@ -12,7 +12,7 @@ def get_reservables(res_svc: ReservableService = Depends()) -> list[Reservable]:
 def create_reservable(reservable_form: ReservableForm, res_svc: ReservableService = Depends()):
     return res_svc.add_reservable(reservable_form)
 
-@api.delete("", tags=["Reservables"])
+@api.delete("/{reservable_id}", tags=["Reservables"])
 def delete_reservable(reservable_id: int, res_svc: ReservableService = Depends()):
     res_svc.delete_reservable(reservable_id=reservable_id)
 
