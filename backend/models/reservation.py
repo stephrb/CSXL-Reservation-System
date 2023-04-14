@@ -1,6 +1,7 @@
 """Reservations are the data object to keep track of user reservations"""
 from pydantic import BaseModel, validator
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 class Reservation(BaseModel):
     id: int
@@ -24,6 +25,8 @@ class ReservationForm(BaseModel):
         if v <= start_time:
             raise ValueError('End time must be after start time')
         
-        if datetime(year=start_time.year, month=start_time.month, day=start_time.day) != datetime(year=v.year, month=v.month, day=v.day):
+        start_time_est, v_est = start_time.astimezone(ZoneInfo('America/New_York')), v.astimezone(ZoneInfo('America/New_York'))
+
+        if datetime(year=start_time_est.year, month=start_time_est.month, day=start_time_est.day) != datetime(year=v_est.year, month=v_est.month, day=v_est.day):
             raise ValueError(f'Start time and end time must be on the same day (start_time: {start_time}, end_time: {v})')
         return v
