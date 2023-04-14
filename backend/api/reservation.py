@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from ..services import ReservationService
 from ..models import Reservation, User, Paginated, PaginationParams, Reservable, ReservationForm
 from .authentication import registered_user
@@ -37,5 +37,17 @@ def create_reservation(
      reservationForm: ReservationForm,
      subject: User = Depends(registered_user), 
      res_svc: ReservationService = Depends()):
-     reservation = res_svc.create_reservation(reservationForm, subject.id)
-     return reservation
+     try:
+          reservation = res_svc.create_reservation(reservationForm, subject.id)
+          return reservation
+     except ValueError:
+          raise HTTPException(409, detial='Reservation could not be created due to an overlapping reservation')
+
+@api.get("/end_time/{reservable_id}", response_model=list[datetime], tags=['Reservations'])
+def get_available_end_times(reservable_id: int, start_time: datetime, res_svc: ReservationService = Depends()):
+     try:
+          return res_svc.get_available_end_times(reservable_id, start_time)
+     except ValueError:
+          raise HTTPException(422, detial=f'start_time: {start_time} is not a valid time slot like XX:00:00.00 or XX:30:00.00')
+          
+
