@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { Route } from '@angular/router'
 import { Observable } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
-import { Reservation, ReservationService, Reservable } from './reservation.service';
+import { Reservation, ReservationService, Reservable, reservableForm } from './reservation.service';
 import { PermissionService } from '../permission.service';
 
 
@@ -16,6 +16,11 @@ export class ReservationComponent {
 
   public selectedDate: Date = new Date();
   public hours: Date[] = [];
+  public reservable_form: reservableForm = {
+      name: '',
+      type: '',
+      description: null
+    };
   public profile$: Observable<Profile | undefined>;
   public checkinPermission$: Observable<boolean>;
   public adminPermission$: Observable<boolean>;
@@ -100,7 +105,26 @@ export class ReservationComponent {
         .subscribe({
           next: () => {
             this.listReservables$ = this.reservationService.getListReservables();
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
             this.cd.detectChanges();
+          },
+          error: (err) => this.onError(err)
+        });
+    }
+  }
+
+  onCreateReservable(reservable_form: reservableForm) {
+    if (window.confirm("You are about to add " + reservable_form.name)) {
+      this.reservationService
+        .createReservable(reservable_form)
+        .subscribe({
+          next: () => {
+            this.listReservables$ = this.reservationService.getListReservables();
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+            this.cd.detectChanges();
+            reservable_form.name = '';
+            reservable_form.type = '';
+            reservable_form.description = null;
           },
           error: (err) => this.onError(err)
         });

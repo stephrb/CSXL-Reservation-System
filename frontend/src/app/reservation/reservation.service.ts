@@ -17,6 +17,12 @@ export interface Reservable {
     description: string
 }
 
+export interface reservableForm {
+    name:	string
+    type:	string
+    description: string | null
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -79,5 +85,9 @@ export class ReservationService {
 
   deleteReservable(reservable_id: number): Observable<void> {
     return this.http.delete<void>("/api/reservable/" + reservable_id)
+  }
+
+  createReservable(reservable_form: reservableForm): Observable<Reservable> {
+    return this.http.post<Reservable>("/api/reservable", reservable_form)
   }
 }

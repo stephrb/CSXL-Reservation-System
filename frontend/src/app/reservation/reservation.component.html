@@ -69,38 +69,29 @@
       <mat-card-header>
           <mat-card-title>Add a Reservable</mat-card-title>
       </mat-card-header>
-      <ng-template #registration>
-          <mat-card-header>
-              <mat-card-title>Welcome to CSXL! Please verify and complete your profile below.</mat-card-title>
-              <mat-card-subtitle>
-                  Once your profile is setup you will be able to take advantage of CSXL initiatives such as
-                  enrolling in workshops, reserving a desk during coworking hours, and more!
-              </mat-card-subtitle>
-          </mat-card-header>
-      </ng-template>
       <mat-card-content>
         <div style="display: block;">
           <mat-form-field appearance="fill">
             <mat-label>Name</mat-label>
-            <input matInput formControlName="name" name="name" required>
+            <input matInput [(ngModel)]="reservable_form.name" name="name" required>
           </mat-form-field>
         </div>
         <div style="display: block;">
           <mat-form-field appearance="fill">
             <mat-label>Type</mat-label>
-            <input matInput formControlName="type" name="type" required>
+            <input matInput [(ngModel)]="reservable_form.type" name="type" required>
           </mat-form-field>
         </div>
         <div style="display: block;">
           <mat-form-field appearance="fill">
             <mat-label>Description</mat-label>
-            <input matInput formControlName="description" name="description" required>
+            <input matInput [(ngModel)]="reservable_form.description" name="description" >
           </mat-form-field>
         </div>
       </mat-card-content>
       
       <mat-card-actions>
-          <button mat-raised-button type="submit">SAVE</button>
+          <button mat-raised-button type="submit" (click)="onCreateReservable(reservable_form)">CREATE</button>
       </mat-card-actions>
   </mat-card>
 
