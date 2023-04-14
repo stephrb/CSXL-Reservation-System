@@ -37,7 +37,7 @@ export class ReservationComponent {
     title: 'Reservation', 
   };
 
-  onClick(reservation: Reservation) {
+  onDeleteClick(reservation: Reservation) {
     if (window.confirm("You are about to delete your reservation for " + reservation.reservable.name + " on " 
       + reservation.start_time.toLocaleString() + " - " + reservation.end_time.toLocaleTimeString())) {
       this.reservationService
@@ -82,13 +82,19 @@ export class ReservationComponent {
 
     return !reservation;
   }
-  
-
 
   onDateChange(event: any) {
     this.selectedDate = event.value;
     this.hours = this.getHours(this.selectedDate);
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+  }
+
+  isValidDate(date: Date): boolean {
+    return date.getTime() > Date.now(); 
+  }
+
+  onCellClick(){
+    console.log("Click works")
   }
 
 }
