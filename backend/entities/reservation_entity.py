@@ -11,14 +11,14 @@ class ReservationEntity(EntityBase):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
-    start_time: Mapped[DateTime] = mapped_column(DateTime, index=True)
-    end_time: Mapped[DateTime] = mapped_column(DateTime)
+    start_time: Mapped[DateTime] = mapped_column(DateTime(timezone=True), index=True)
+    end_time: Mapped[DateTime] = mapped_column(DateTime(timezone=True))
 
     reservable_id: Mapped[int] = mapped_column(ForeignKey('reservable.id'), index=True)
-    reservable: Mapped[ReservableEntity] = relationship("ReservableEntity")
+    reservable: Mapped["ReservableEntity"] = relationship("ReservableEntity")
 
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), index=True)
-    user: Mapped[UserEntity] = relationship("UserEntity")
+    user: Mapped["UserEntity"] = relationship("UserEntity")
 
     @classmethod
     def from_model(cls, model: Reservation) -> Self:
