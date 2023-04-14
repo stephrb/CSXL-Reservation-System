@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from ...models import User, Reservation, Reservable, PaginationParams, Paginated, ReservationForm
 from ...entities import UserEntity, RoleEntity, PermissionEntity, ReservableEntity, ReservationEntity
 from ...services import ReservationService
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pydantic import ValidationError
 
 # Mock Models
@@ -13,7 +13,8 @@ student = User(id=2, pid=111111111, onyen='sol',
 
 reservable = Reservable(id=1, name='Laptop #1', type='Laptop', description='The first laptop')
 
-time = datetime.now() + timedelta(days = 1)
+time = (datetime.now(timezone.utc) + timedelta(days = 1))
+
 start_time = time.replace(hour=10, minute=0, second=0, microsecond=0)
 reservation = ReservationForm(start_time=start_time, end_time=start_time + timedelta(hours=3), reservable_id=1)
 
@@ -79,14 +80,14 @@ def test_get_reservations_by_reservable_empty(reservation_service: ReservationSe
     assert reservation_service.get_reservations_by_reservable(1, start_time_2 + timedelta(days=1)) == []
 
 def test_create_reservation(reservation_service: ReservationService):
-    time = datetime.now() + timedelta(days=4)
-    start_time = datetime(year=time.year, day=time.day, month=time.month, hour=12)
+    time = datetime.now(timezone.utc) + timedelta(days=4)
+    start_time = datetime(year=time.year, day=time.day, month=time.month, hour=12, tzinfo=time.tzinfo)
     end_time = start_time + timedelta(hours=2)
     res = reservation_service.create_reservation(reservation_form=ReservationForm(start_time=start_time, end_time=end_time, reservable_id=reservable.id), user_id=student.id)
     assert res == Reservation(id=3, start_time=start_time, end_time=end_time)
 
 def test_create_reservation_at_invalid_time():
-    time = datetime.now() + timedelta(days=1)
+    time = datetime.now(timezone.utc) + timedelta(days=1)
     start_time = datetime(year=time.year, day=time.day, month=time.month, hour=12)
     end_time = start_time + timedelta(hours=2)
     
@@ -100,7 +101,7 @@ def test_create_reservation_at_invalid_time():
         ReservationForm(start_time=start_time.replace(minute=1), end_time=end_time, reservable_id=reservable.id)
 
 def test_reservation_validate_end_time():
-    time = datetime.now() + timedelta(days=2)
+    time = datetime.now(timezone.utc) + timedelta(days=2)
     start_time = datetime(year=time.year, month=time.month, day=time.day, hour=12)
     end_time = start_time - timedelta(hours=1)
     with pytest.raises(ValidationError):
@@ -129,8 +130,31 @@ def test_cannot_create_overlapping_reservation(reservation_service: ReservationS
     reservation_service.create_reservation(reservation_form=reservation_form, user_id=student.id)
 
 def test_created_reservation_saved_to_db(reservation_service: ReservationService):
-    time = datetime.now() + timedelta(days=5)
+    time = datetime.now(timezone.utc) + timedelta(days=5)
     start_time = datetime(year=time.year, day=time.day, month=time.month, hour=12)
     end_time = start_time + timedelta(hours=2)
     res = reservation_service.create_reservation(reservation_form=ReservationForm(start_time=start_time, end_time=end_time, reservable_id=reservable.id), user_id=student.id)
     assert reservation_service.get_reservation(res.id) == res
+
+def test_get_end_times(reservation_service: ReservationService):
+    res = reservation_service.get_available_end_times(reservable.id, start_time - timedelta(hours=1))
+    assert res == [start_time - timedelta(minutes=30), start_time]
+
+def test_get_end_times_with_no_reservations_that_day(reservation_service: ReservationService):
+    start_time = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0, hour=12)
+    start_time += timedelta(days=5)
+    res = reservation_service.get_available_end_times(reservable.id, start_time)
+    expected = [start_time + timedelta(minutes=30 * i) for i in range(1,7)]
+    assert res == expected    
+
+def test_get_end_times_validation(reservation_service: ReservationService):
+    time = datetime.now(timezone.utc)
+    with pytest.raises(ValueError):
+        reservation_service.get_available_end_times(reservable.id, time + timedelta(days=1))
+
+    time = time.replace(second=0, microsecond=1, minute=0)
+    with pytest.raises(ValueError):
+        reservation_service.get_available_end_times(reservable.id, time - timedelta(days=1))
+
+def test_get_end_times_at_existing_time(reservation_service: ReservationService):
+    assert reservation_service.get_available_end_times(reservable.id, start_time) == []
