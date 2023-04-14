@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { Route } from '@angular/router'
 import { Observable } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
-import { Reservation, ReservationService, Reservable } from './reservation.service';
+import { Reservation, ReservationService, Reservable, reservableForm } from './reservation.service';
 import { PermissionService } from '../permission.service';
 
 
@@ -16,10 +16,16 @@ export class ReservationComponent {
 
   public selectedDate: Date = new Date();
   public hours: Date[] = [];
+  public reservable_form: reservableForm = {
+      name: '',
+      type: '',
+      description: null
+    };
   public profile$: Observable<Profile | undefined>;
   public checkinPermission$: Observable<boolean>;
   public adminPermission$: Observable<boolean>;
   public userReservations$: Observable<Reservation[]>;
+  public listReservables$: Observable<Reservable[]>;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
 
   constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef
@@ -29,6 +35,7 @@ export class ReservationComponent {
     this.checkinPermission$ = this.permission.check('checkin.create', 'checkin/');
     this.adminPermission$ = this.permission.check('admin.view', 'admin/');
     this.userReservations$ = this.reservationService.getUserReservations();
+    this.listReservables$ = this.reservationService.getListReservables();
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
   }
   public static Route: Route = {
@@ -45,7 +52,7 @@ export class ReservationComponent {
         .subscribe({
           next: () => {
             this.userReservations$ = this.reservationService.getUserReservations();
-            this.cd.detectChanges(); // Trigger change detection manually
+            this.cd.detectChanges(); 
           },
           error: (err) => this.onError(err)
         });
@@ -89,6 +96,39 @@ export class ReservationComponent {
     this.selectedDate = event.value;
     this.hours = this.getHours(this.selectedDate);
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+  }
+
+  onDeleteReservable(reservable: Reservable) {
+    if (window.confirm("You are about to delete " + reservable.name)) {
+      this.reservationService
+        .deleteReservable(reservable.id)
+        .subscribe({
+          next: () => {
+            this.listReservables$ = this.reservationService.getListReservables();
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+            this.cd.detectChanges();
+          },
+          error: (err) => this.onError(err)
+        });
+    }
+  }
+
+  onCreateReservable(reservable_form: reservableForm) {
+    if (window.confirm("You are about to add " + reservable_form.name)) {
+      this.reservationService
+        .createReservable(reservable_form)
+        .subscribe({
+          next: () => {
+            this.listReservables$ = this.reservationService.getListReservables();
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+            this.cd.detectChanges();
+            reservable_form.name = '';
+            reservable_form.type = '';
+            reservable_form.description = null;
+          },
+          error: (err) => this.onError(err)
+        });
+    }
   }
 
 }
