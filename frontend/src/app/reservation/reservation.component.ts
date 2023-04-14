@@ -73,7 +73,7 @@ export class ReservationComponent {
     return result;
   }
 
-  isAvailable(reservations: Reservation[], hour: Date, test:any): boolean {
+  isAvailable(reservations: Reservation[], hour: Date): boolean {
     const reservation = reservations.some(reservation => {
       const startHour: Date = new Date(reservation.start_time);
       const endHour: Date = new Date(reservation.end_time);
