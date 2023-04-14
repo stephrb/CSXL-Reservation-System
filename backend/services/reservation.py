@@ -6,6 +6,7 @@ from ..models import Reservation, User, PaginationParams, Paginated, Reservable,
 from ..entities import ReservationEntity, ReservableEntity
 from .permission import PermissionService
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from operator import ge, lt
 import operator
 
@@ -85,8 +86,9 @@ class ReservationService:
     def get_available_end_times(self, reservable_id: int, start_time: datetime) -> list[datetime]:
         if start_time < datetime.now(start_time.tzinfo) or start_time.minute not in [0, 30] or start_time.second != 0 or start_time.microsecond != 0:
             raise ValueError(f'Start_time: {start_time} is not a valid time slot')
+        start_time_est = start_time.astimezone(ZoneInfo('America/New_York'))
+        max_end_time = min(start_time_est.replace(minute=0, hour=0, microsecond=0, second=0) + timedelta(days=1), start_time + timedelta(hours=3))
         
-        max_end_time = min(datetime(year=start_time.year, month=start_time.month, day=start_time.day, tzinfo=start_time.tzinfo) + timedelta(days=1), start_time + timedelta(hours=3))
         statement = select(ReservationEntity).filter(ReservationEntity.reservable_id == reservable_id,
                                                     ReservationEntity.start_time >= start_time,
                                                     ReservationEntity.start_time < max_end_time)
