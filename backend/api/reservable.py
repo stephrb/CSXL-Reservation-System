@@ -8,9 +8,9 @@ api = APIRouter(prefix="/api/reservable")
 def get_reservables(res_svc: ReservableService = Depends()) -> list[Reservable]:
     return res_svc.list_reservables()
 
-@api.post("", response_model=ReservableForm, tags=["Reservables"])
-def create_reservable(reservable_form: ReservableForm, res_svc: ReservableService = Depends()) -> ReservableForm:
-    res_svc.add_reservable(reservable_form)
+@api.post("", response_model=Reservable, tags=["Reservables"])
+def create_reservable(reservable_form: ReservableForm, res_svc: ReservableService = Depends()):
+    return res_svc.add_reservable(reservable_form)
 
 @api.delete("", tags=["Reservables"])
 def delete_reservable(reservable_id: int, res_svc: ReservableService = Depends()):
