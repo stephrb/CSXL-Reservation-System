@@ -14,7 +14,7 @@ class ReservationEntity(EntityBase):
     start_time: Mapped[DateTime] = mapped_column(DateTime, index=True)
     end_time: Mapped[DateTime] = mapped_column(DateTime)
 
-    reservable_id: Mapped[int] = mapped_column(ForeignKey('reservable.id'), index=True)
+    reservable_id: Mapped[int] = mapped_column(ForeignKey('reservable.id', ondelete="CASCADE"), index=True)
     reservable: Mapped[ReservableEntity] = relationship()
 
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), index=True)
