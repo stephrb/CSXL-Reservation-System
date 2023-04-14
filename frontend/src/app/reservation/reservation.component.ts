@@ -93,5 +93,19 @@ export class ReservationComponent {
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
   }
 
+  onDeleteReservable(reservable: Reservable) {
+    if (window.confirm("You are about to delete " + reservable.name)) {
+      this.reservationService
+        .deleteReservable(reservable.id)
+        .subscribe({
+          next: () => {
+            this.listReservables$ = this.reservationService.getListReservables();
+            this.cd.detectChanges();
+          },
+          error: (err) => this.onError(err)
+        });
+    }
+  }
+
 }
 

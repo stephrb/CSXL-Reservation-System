@@ -76,4 +76,8 @@ export class ReservationService {
   deleteReservation(reservation_id: number): Observable<void> {
     return this.http.delete<void>("/api/reservation/" + reservation_id);
   }
+
+  deleteReservable(reservable_id: number): Observable<void> {
+    return this.http.delete<void>("/api/reservable/" + reservable_id)
+  }
 }

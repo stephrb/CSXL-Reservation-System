@@ -117,7 +117,7 @@
           <td>{{ reservable.name}}  </td>
           <td>{{ reservable.type}}  </td>
           <td>{{ reservable.description }}</td>
-          <td class="delete"> <button type="button" mat-icon-button color="warn" aria-label="Delete button">
+          <td class="delete"> <button (click)="onDeleteReservable(reservable)" type="button" mat-icon-button color="warn" aria-label="Delete button">
             <mat-icon>delete</mat-icon>
           </button>
           </td>
