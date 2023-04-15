@@ -44,7 +44,7 @@ export class ReservationComponent {
     title: 'Reservation', 
   };
 
-  onDeleteClick(reservation: Reservation) {
+  onDeleteReservation(reservation: Reservation) {
     if (window.confirm("You are about to delete your reservation for " + reservation.reservable.name + " on " 
       + reservation.start_time.toLocaleString() + " - " + reservation.end_time.toLocaleTimeString())) {
       this.reservationService
