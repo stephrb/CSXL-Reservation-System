@@ -11,7 +11,7 @@
     </mat-form-field>
     
     <div class="table-container">
-      <table  mat-table class="table">
+      <table class="table">
         <thead>
           <tr>
             <td class="name">Name</td>
@@ -39,29 +39,53 @@
   </mat-tab>
   <mat-tab label="My Reservations"> 
     <h2>My Upcoming Reservations</h2>
-    <table mat-table>
-      <thead>
-          <td>Date</td>
-          <td>Time</td>
-          <td>Reservation</td>
-          <td>Type</td>
-          <td>Description</td>
-          <td>Delete</td>
-      </thead>
-      <tbody>
-          <tr *ngFor="let reservation of userReservations$ | async">
-              <td>{{ reservation.start_time | date: 'mediumDate'}}  </td>
-              <td>{{ reservation.start_time | date: 'shortTime' }} - {{ reservation.end_time | date: 'shortTime' }}</td>
-              <td>{{ reservation.reservable.name }}</td>
-              <td>{{ reservation.reservable.type }}</td>
-              <td>{{ reservation.reservable.description }}</td>
-              <td> <button type="button" (click)="onClick(reservation)" mat-icon-button color="warn" aria-label="Delete button">
-                <mat-icon>delete</mat-icon>
-              </button>
-              </td>
-          </tr>
-      </tbody>
-  </table>
+
+  <ng-container *ngIf="(userReservations$ | async) as userReservations">
+    <table mat-table [dataSource]="userReservations">
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let reservation">{{ reservation.start_time | date: 'mediumDate' }}</td>
+      </ng-container>
+    
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef>Time</th>
+        <td mat-cell *matCellDef="let reservation">{{ reservation.start_time | date: 'shortTime' }} - {{ reservation.end_time | date: 'shortTime' }}</td>
+      </ng-container>
+    
+      <ng-container matColumnDef="reservation">
+        <th mat-header-cell *matHeaderCellDef>Reservation</th>
+        <td mat-cell *matCellDef="let reservation">{{ reservation.reservable.name }}</td>
+      </ng-container>
+    
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let reservation">{{ reservation.reservable.type }}</td>
+      </ng-container>
+    
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let reservation">{{ reservation.reservable.description }}</td>
+      </ng-container>
+    
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef>Delete</th>
+        <td mat-cell *matCellDef="let reservation" class="delete">
+          <button mat-icon-button color="warn" aria-label="Delete button" (click)="onClick(reservation)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+    
+      <tr mat-header-row *matHeaderRowDef="reservationColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: reservationColumns"></tr>
+    </table>
+  
+  </ng-container>
+  <div *ngIf="!(userReservations$ | async)">No reservations found.</div>
+
+  <div *ngIf="userReservations$ | async as userReservations">
+  </div>
+
   </mat-tab>
 
   <mat-tab *ngIf="adminPermission$ | async" label="Admin">
@@ -94,26 +118,34 @@
           <button mat-raised-button type="submit" (click)="onCreateReservable(reservable_form)">CREATE</button>
       </mat-card-actions>
   </mat-card>
-
-  <table mat-table>
-    <thead>
-      <td>Name</td>
-      <td>Type</td>
-      <td>Description</td>
-      <td>Delete</td>
-    </thead>
-
-    <tbody>
-      <tr *ngFor="let reservable of listReservables$ | async">
-          <td>{{ reservable.name}}  </td>
-          <td>{{ reservable.type}}  </td>
-          <td>{{ reservable.description }}</td>
-          <td class="delete"> <button (click)="onDeleteReservable(reservable)" type="button" mat-icon-button color="warn" aria-label="Delete button">
-            <mat-icon>delete</mat-icon>
-          </button>
-          </td>
-      </tr>
-  </tbody>
+  
+  <table mat-table [dataSource]="listReservables$">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let reservable">{{ reservable.name }}</td>
+    </ng-container>
+  
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let reservable">{{ reservable.type }}</td>
+    </ng-container>
+  
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let reservable">{{ reservable.description }}</td>
+    </ng-container>
+  
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef>Delete</th>
+      <td mat-cell *matCellDef="let reservable" class="delete">
+        <button mat-icon-button color="warn" aria-label="Delete button" (click)="onDeleteReservable(reservable)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
   </mat-tab>
 </mat-tab-group>

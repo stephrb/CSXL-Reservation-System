@@ -24,9 +24,12 @@ export class ReservationComponent {
   public profile$: Observable<Profile | undefined>;
   public checkinPermission$: Observable<boolean>;
   public adminPermission$: Observable<boolean>;
-  public userReservations$: Observable<Reservation[]>;
-  public listReservables$: Observable<Reservable[]>;
+  public userReservations$: Observable<readonly Reservation[]>;
+  public listReservables$: Observable<readonly Reservable[]>;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
+
+  public displayedColumns: string[] = ['name', 'type', 'description', 'delete'];
+  public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete']
 
   constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef
   ){
@@ -52,6 +55,7 @@ export class ReservationComponent {
         .subscribe({
           next: () => {
             this.userReservations$ = this.reservationService.getUserReservations();
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
             this.cd.detectChanges(); 
           },
           error: (err) => this.onError(err)
