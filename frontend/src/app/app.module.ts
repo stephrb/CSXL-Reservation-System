@@ -26,6 +26,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTableModule } from '@angular/material/table';
 import { FormsModule } from '@angular/forms'; // Import FormsModule here
 
 /* Application Specific */
@@ -71,6 +72,7 @@ import { ReservationComponent } from './reservation/reservation.component';
     MatToolbarModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTableModule,
     FormsModule,
     JwtModule.forRoot({
       config: {
