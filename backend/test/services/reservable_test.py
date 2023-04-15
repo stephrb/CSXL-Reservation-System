@@ -32,14 +32,14 @@ def test_list_reservable(reservable_service: ReservableService):
     assert reservable_service.list_reservables() == [reservable, reservable_2]
 
 def test_delete_reservable(reservable_service: ReservableService):
-    reservable_service.delete_reservable(2)
+    reservable_service.delete(2)
     assert reservable_service.list_reservables() == [reservable]
 
 def test_delete_all_reservables(reservable_service: ReservableService):
-    reservable_service.delete_reservable(1)
-    reservable_service.delete_reservable(2)
+    reservable_service.delete(1)
+    reservable_service.delete(2)
     assert reservable_service.list_reservables() == []
 
 def test_add_reservable(reservable_service: ReservableService):
-    reservable_service.add_reservable(reservable_3)
+    reservable_service.add(reservable_3)
     assert reservable_service.list_reservables() == [reservable, reservable_2, reservable_3_true]
