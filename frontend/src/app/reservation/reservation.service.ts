@@ -70,10 +70,17 @@ export class ReservationService {
         return forkJoin(availabilityObservables);
       })
     );
-}
+  }
   
-
   deleteReservation(reservation_id: number): Observable<void> {
     return this.http.delete<void>("/api/reservation/" + reservation_id);
   }
+
+  getAvailableEndTimes(reservable_id: number, start_time: Date): Observable<Date[]>{
+    let params = new HttpParams().set('start_time', start_time.toISOString());
+    let url = "/api/reservation/end_time/" + reservable_id;
+    return this.http.get<Date[]>(url, { params });
+  }
+
+
 }
