@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { Route } from '@angular/router'
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
 import { Reservation, ReservationService, Reservable, reservableForm } from './reservation.service';
 import { PermissionService } from '../permission.service';
@@ -48,7 +48,6 @@ export class ReservationComponent {
   };
 
   onClick(reservation: Reservation) {
-    console.log('here')
     if (window.confirm("You are about to delete your reservation for " + reservation.reservable.name + " on " 
       + reservation.start_time.toLocaleString() + " - " + reservation.end_time.toLocaleTimeString())) {
       this.reservationService
