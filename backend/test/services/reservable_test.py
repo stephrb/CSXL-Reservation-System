@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 from ...models import User, Reservation, Reservable, PaginationParams, Paginated, ReservableForm, Role
 from ...entities import UserEntity, RoleEntity, PermissionEntity, ReservableEntity, ReservationEntity
-from ...services import ReservationService, ReservableService, PermissionService
+from ...services import ReservationService, ReservableService, PermissionService, UserPermissionError
 from datetime import datetime, timedelta
 
 # Mock Models
@@ -27,7 +27,7 @@ def setup_teardown(test_session: Session):
     root_role_entity.users.append(root_user_entity)
     test_session.add(root_role_entity)
     root_permission_entity = PermissionEntity(
-        action='*', resource='*', role=root_role_entity)
+        action='reservable.*', resource='*', role=root_role_entity)
     test_session.add(root_permission_entity)
 
     reservable_entity = ReservableEntity.from_model(reservable)
@@ -46,8 +46,7 @@ def setup_teardown(test_session: Session):
 
 @pytest.fixture()
 def reservable_service(test_session: Session):
-    return ReservableService(test_session)
-
+    return ReservableService(test_session, PermissionService(test_session))
 
 def test_list_reservable(reservable_service: ReservableService):
     assert reservable_service.list_reservables() == [reservable, reservable_2]
@@ -64,3 +63,11 @@ def test_delete_all_reservables(reservable_service: ReservableService):
 def test_add_reservable(reservable_service: ReservableService):
     reservable_service.add(reservable_3, root)
     assert reservable_service.list_reservables() == [reservable, reservable_2, reservable_3_true]
+
+def test_add_with_permission_error(reservable_service: ReservableService):
+    with pytest.raises(UserPermissionError):
+        reservable_service.add(reservable_3, user)
+
+def test_delete_with_permission_error(reservable_service: ReservableService):
+    with pytest.raises(UserPermissionError):
+        reservable_service.delete(2, user)
