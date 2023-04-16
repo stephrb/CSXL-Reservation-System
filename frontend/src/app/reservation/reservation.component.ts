@@ -52,6 +52,7 @@ export class ReservationComponent {
         .subscribe({
           next: () => {
             this.userReservations$ = this.reservationService.getUserReservations();
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
             this.cd.detectChanges(); // Trigger change detection manually
           },
           error: (err) => this.onError(err)
