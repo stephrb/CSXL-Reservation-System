@@ -2,7 +2,7 @@ from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from typing import Self
 from .entity_base import EntityBase
-from ..models import Reservable
+from ..models import Reservable, ReservableForm
 
 class ReservableEntity(EntityBase):
     __tablename__ = "reservable"
@@ -16,6 +16,14 @@ class ReservableEntity(EntityBase):
     def from_model(cls, model: Reservable) -> Self:
         return cls(
             id=model.id,
+            name=model.name,
+            type=model.type,
+            description=model.description,
+        )
+    
+    @classmethod
+    def from_form_model(cls, model: ReservableForm) -> Self:
+        return cls(
             name=model.name,
             type=model.type,
             description=model.description,

@@ -29,3 +29,12 @@ table {
     background-color: red;
   }
 
+  .table-container {
+    width: 100%; 
+    overflow-x: auto;
+  }
+
+  .delete {
+    width: 5%;
+  }
+

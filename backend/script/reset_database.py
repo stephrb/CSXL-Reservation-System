@@ -69,7 +69,7 @@ with Session(engine) as session:
 
     to_entity = entities.ReservableEntity.from_model
     session.add_all([to_entity(model) for model in reservables.models])
-    session.execute(text(f'ALTER SEQUENCE {entities.ReservableEntity.__table__}_id_seq RESTART WITH {len(users.models) + 1}'))
+    session.execute(text(f'ALTER SEQUENCE {entities.ReservableEntity.__table__}_id_seq RESTART WITH {len(reservables.models) + 1}'))
     session.commit()
 
 # Add Reservations

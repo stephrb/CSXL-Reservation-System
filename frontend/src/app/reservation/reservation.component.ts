@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { Route } from '@angular/router'
 import { Observable, of } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
-import { Reservation, ReservationService, Reservable } from './reservation.service';
+import { Reservation, ReservationService, Reservable, reservableForm } from './reservation.service';
 import { PermissionService } from '../permission.service';
 import { FormBuilder } from '@angular/forms';
 
@@ -21,13 +21,22 @@ export class ReservationComponent {
   public selectedReservable: Reservable | undefined;
   public selectedEndTime: Date | undefined;
   public possibleEndTimes$: Observable<Date[]>;
+  public reservable_form: reservableForm = {
+      name: '',
+      type: '',
+      description: null
+    };
   public profile$: Observable<Profile | undefined>;
   public checkinPermission$: Observable<boolean>;
   public adminPermission$: Observable<boolean>;
-  public userReservations$: Observable<Reservation[]>;
+  public userReservations$: Observable<readonly Reservation[]>;
+  public listReservables$: Observable<readonly Reservable[]>;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
+  public displayedColumns: string[] = ['name', 'type', 'description', 'delete'];
+  public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete']
 
-  constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef, private formBuilder: FormBuilder){
+  constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef
+  ){
     this.hours = this.getHours(new Date());  
     this.profile$ = profileService.profile$;
     this.checkinPermission$ = this.permission.check('checkin.create', 'checkin/');
@@ -35,6 +44,8 @@ export class ReservationComponent {
     this.userReservations$ = this.reservationService.getUserReservations();
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
     this.possibleEndTimes$ = of();
+    this.listReservables$ = this.reservationService.getListReservables();
+    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
   }
 
   public static Route: Route = {
@@ -51,8 +62,8 @@ export class ReservationComponent {
         .subscribe({
           next: () => {
             this.userReservations$ = this.reservationService.getUserReservations();
-            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
-            this.cd.detectChanges(); // Trigger change detection manually
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+            this.cd.detectChanges(); 
           },
           error: (err) => this.onError(err)
         });
@@ -96,8 +107,42 @@ export class ReservationComponent {
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
   }
 
+
   isValidDate(date: Date): boolean {
     return date.getTime() > Date.now(); 
+  }
+  
+  onDeleteReservable(reservable: Reservable) {
+    if (window.confirm("You are about to delete " + reservable.name)) {
+      this.reservationService
+        .deleteReservable(reservable.id)
+        .subscribe({
+          next: () => {
+            this.listReservables$ = this.reservationService.getListReservables();
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+            this.cd.detectChanges();
+          },
+          error: (err) => this.onError(err)
+        });
+    }
+  }
+
+  onCreateReservable(reservable_form: reservableForm) {
+    if (window.confirm("You are about to add " + reservable_form.name)) {
+      this.reservationService
+        .createReservable(reservable_form)
+        .subscribe({
+          next: () => {
+            this.listReservables$ = this.reservationService.getListReservables();
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+            this.cd.detectChanges();
+            reservable_form.name = '';
+            reservable_form.type = '';
+            reservable_form.description = null;
+          },
+          error: (err) => this.onError(err)
+        });
+    }
   }
 
   onCellClick(date: Date, reservable: Reservable) {

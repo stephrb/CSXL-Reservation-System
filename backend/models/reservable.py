@@ -6,3 +6,8 @@ class Reservable(BaseModel):
     name: str
     type: str
     description: str | None = None
+
+class ReservableForm(BaseModel):
+    name: str
+    type: str
+    description: str | None
