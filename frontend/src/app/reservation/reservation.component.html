@@ -9,7 +9,7 @@
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-    
+  
     <table>
       <thead>
         <tr>
@@ -25,16 +25,41 @@
           <tr>
             <td>{{ reservable.reservable.name }}</td>
             <ng-container *ngFor="let hour of hours">
+<<<<<<< HEAD
+              <td *ngIf="isValidDate(hour) && !isAvailable(reservable.reservations, hour)" class="notAvailable"></td>
+              <td *ngIf="isValidDate(hour) && isAvailable(reservable.reservations, hour)" class="available" (click) = "onCellClick(hour, reservable.reservable)"></td>
+=======
               <td *ngIf="!isAvailable(reservable.reservations, hour)" class="notAvailable"></td>
               <td *ngIf="isAvailable(reservable.reservations, hour)" class="available" (click) = "onCellClick()"></td>
+>>>>>>> origin/3-create-reservation
               <td *ngIf="!isValidDate(hour)" class="invalidDate"></td>
             </ng-container>
           </tr>
         </ng-container>
       </tbody>
     </table>
-    
+
+    <mat-card *ngIf="selectedReservable && selectedStartTime">
+      <mat-card-header>
+        <mat-card-title>Reserve {{selectedReservable.name }} on {{selectedStartTime | date: 'mediumDate'}} from {{ selectedStartTime | date: 'shortTime' }}  until</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="fill">
+          <mat-label>End Time</mat-label>
+          <mat-select [(ngModel)]="selectedEndTime">
+             <mat-option *ngFor="let endTime of possibleEndTimes$ | async" [value]="endTime">
+              {{endTime | date: 'shortTime' }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="accent" (click)="onCreateReservation()">RESERVE</button>
+      </mat-card-actions>
+    </mat-card>
+
   </mat-tab>
+
   <mat-tab label="My Reservations"> 
     <h2>My Upcoming Reservations</h2>
     <table>
@@ -53,7 +78,7 @@
               <td>{{ reservation.reservable.name }}</td>
               <td>{{ reservation.reservable.type }}</td>
               <td>{{ reservation.reservable.description }}</td>
-              <td> <button type="button" (click)="onDeleteClick(reservation)" mat-icon-button color="warn" aria-label="Delete button">
+              <td> <button type="button" (click)="onDeleteReservation(reservation)" mat-icon-button color="warn" aria-label="Delete button">
                 <mat-icon>delete</mat-icon>
               </button>
               </td>
