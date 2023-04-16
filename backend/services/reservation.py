@@ -5,7 +5,7 @@ from ..database import db_session
 from ..models import Reservation, User, PaginationParams, Paginated, Reservable, ReservationForm
 from ..entities import ReservationEntity, ReservableEntity
 from .permission import PermissionService
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from operator import ge, lt
 import operator
@@ -79,7 +79,8 @@ class ReservationService:
 
     def get_reservations_by_reservable(self, reservable_id: int, date: datetime) -> list[Reservation]:
         """Gets a list of reservations given a reservable id number."""
-        date = datetime(date.year, date.month, date.day)
+        date = date.astimezone(ZoneInfo('America/New_York')) 
+        date = datetime(date.year, date.month, date.day, tzinfo=date.tzinfo).astimezone(timezone.utc)
         statement = select(ReservationEntity).where(ReservationEntity.reservable_id == reservable_id)\
         .filter(ReservationEntity.start_time >= date, ReservationEntity.start_time < date + timedelta(days=1))
         entities = self._session.scalars(statement)

@@ -54,6 +54,6 @@ def get_available_end_times(reservable_id: int, start_time: datetime, res_svc: R
      try:
           return res_svc.get_available_end_times(reservable_id, start_time)
      except ValueError:
-          raise HTTPException(422, detial=f'start_time: {start_time} is not a valid time slot like XX:00:00.00 or XX:30:00.00')
+          raise HTTPException(422, detail=f'start_time: {start_time} is not a valid time slot like XX:00:00.00 or XX:30:00.00')
           
 
