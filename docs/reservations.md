@@ -11,8 +11,11 @@ The Reservation page has three tabs:
 View the deployed site at [team-f4-comp423-23s.apps.cloudapps.unc.edu](https://team-f4-comp423-23s.apps.cloudapps.unc.edu). Once at the site, register or sign in, since only registered users can access our feature. If attempting to view the admin features, be sure to sign in with an admin account. Then, click "Reservations" on the sidebar to navigate to the Reservations page.  
 
 ## Implementation Notes
-Description of database/entity-level representation of your feature
-Interesting design choices your team made (we choose to do X over Y, because…)
+In our system, we have two databases; one for Reservables and one for Reservations. The Reservable database contains an entity for each piece of equipment/room that the CSXL offers for reservation, which itself contains information on the reservable in the form of a name, type, and description for the equipment/room. The Reservation database contains entities for reservations that users have made, which each entity containing a start time and end time for the reservation, a reservable id number which links to the Reservable database, and a User id number which links to the User database.
+
+We chose to format the databases in this way because we thought that by linking the databases together by using the ID numbers would be faster and save more memory than putting whole Reservable or User objects into the Reservation database. Also, by enabling a cascade-on-delete feature, the reservation entities will all delete themselves if the associated reservable is deleted. We also left most of the displaying methods up to the frontend, opting to return full lists of reservables and reservations, and sort through them depending on frontend form inputs.
+
+We borrowed much of the design ideas for the availability table from the Davis Library reservation system, because we thought that it was a clean and simple way for the user to be able to make decisions while being able to see a full list of reservables and their reservations that have already been made. The choices of green and red coloring are to emphasize this depiction of "already reserved" and "available".
 
 ## Development Concerns
 **Relevant Files:**
