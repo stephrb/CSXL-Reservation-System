@@ -93,7 +93,7 @@ export class ReservationComponent {
   onDateChange(event: any) {
     this.selectedDate = event.value;
     this.hours = this.getHours(this.selectedDate);
-    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
   }
 
   isValidDate(date: Date): boolean {
@@ -106,8 +106,25 @@ export class ReservationComponent {
     this.possibleEndTimes$ = this.reservationService.getAvailableEndTimes(this.selectedReservable.id, this.selectedStartTime);
   }
 
-  
-
+  onCreateReservation() {
+    if(this.selectedReservable && this.selectedStartTime && this.selectedEndTime){
+       if (window.confirm("Create a reservation for " + this.selectedReservable.name + " on " 
+        + this.selectedStartTime.toLocaleString() + " - " + this.selectedEndTime.toLocaleTimeString() +"?")) {
+          this.reservationService
+          .createReservation(this.selectedStartTime, this.selectedEndTime, this.selectedReservable.id)
+          .subscribe({
+            next: () => {
+              this.userReservations$ = this.reservationService.getUserReservations();
+              this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+              this.selectedReservable = undefined;
+              this.selectedStartTime = undefined; 
+              this.selectedEndTime = undefined;
+              this.cd.detectChanges(); 
+            },
+            error: (err) => this.onError(err)
+          });
+      }
+    }
+  }
     
 }
-

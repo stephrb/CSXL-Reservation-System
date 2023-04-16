@@ -49,7 +49,7 @@
         </mat-form-field>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="accent">RESERVE</button>
+        <button mat-raised-button color="accent" (click)="onCreateReservation()">RESERVE</button>
       </mat-card-actions>
     </mat-card>
 
@@ -73,7 +73,7 @@
               <td>{{ reservation.reservable.name }}</td>
               <td>{{ reservation.reservable.type }}</td>
               <td>{{ reservation.reservable.description }}</td>
-              <td> <button type="button" (click)="onDeleteClick(reservation)" mat-icon-button color="warn" aria-label="Delete button">
+              <td> <button type="button" (click)="onDeleteReservation(reservation)" mat-icon-button color="warn" aria-label="Delete button">
                 <mat-icon>delete</mat-icon>
               </button>
               </td>
