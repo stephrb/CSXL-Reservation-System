@@ -100,14 +100,14 @@ export class ReservationComponent {
     return date.getTime() > Date.now(); 
   }
 
-  onCellClick(date: Date, reservable: Reservable){
+  onCellClick(date: Date, reservable: Reservable) {
     this.selectedStartTime = date;
     this.selectedReservable = reservable;
     this.possibleEndTimes$ = this.reservationService.getAvailableEndTimes(this.selectedReservable.id, this.selectedStartTime);
   }
 
   onCreateReservation() {
-    if(this.selectedReservable && this.selectedStartTime && this.selectedEndTime){
+    if(this.selectedReservable && this.selectedStartTime && this.selectedEndTime) {
        if (window.confirm("Create a reservation for " + this.selectedReservable.name + " on " 
         + this.selectedStartTime.toLocaleString() + " - " + this.selectedEndTime.toLocaleTimeString() +"?")) {
           this.reservationService

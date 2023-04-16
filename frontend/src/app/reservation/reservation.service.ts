@@ -76,7 +76,7 @@ export class ReservationService {
     return this.http.delete<void>("/api/reservation/" + reservation_id);
   }
 
-  getAvailableEndTimes(reservable_id: number, start_time: Date): Observable<Date[]>{
+  getAvailableEndTimes(reservable_id: number, start_time: Date): Observable<Date[]> {
     let params = new HttpParams().set('start_time', start_time.toISOString());
     let url = "/api/reservation/end_time/" + reservable_id;
     return this.http.get<string[]>(url, { params }).pipe(
