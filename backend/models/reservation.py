@@ -4,11 +4,13 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 class Reservation(BaseModel):
+    """Reservation base model."""
     id: int
     start_time: datetime
     end_time: datetime
 
 class ReservationForm(BaseModel):
+    """ReservationForm base model."""
     start_time: datetime
     end_time: datetime
     reservable_id: int

@@ -7,6 +7,11 @@ from .user_entity import UserEntity
 from .reservable_entity import ReservableEntity
 
 class ReservationEntity(EntityBase):
+    """Reservation database entity 
+    
+    Attributes:
+        model: base model for conversion between entities and model objects.
+    """
     __tablename__ = "reservation"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -22,6 +27,7 @@ class ReservationEntity(EntityBase):
 
     @classmethod
     def from_model(cls, model: Reservation) -> Self:
+        """Creates an entity from reservation base model."""
         return cls(
             id=model.id,
             start_time=model.start_time,
@@ -32,6 +38,7 @@ class ReservationEntity(EntityBase):
         return cls(start_time=model.start_time, end_time=model.end_time, reservable_id=model.reservable_id)
 
     def to_model(self) -> Reservation:
+        """Creates a reservation base model object from entity."""
         return Reservation(
             id=self.id,
             start_time=self.start_time,

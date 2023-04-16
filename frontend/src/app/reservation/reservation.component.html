@@ -89,7 +89,7 @@
       <ng-container matColumnDef="delete">
         <th mat-header-cell *matHeaderCellDef>Delete</th>
         <td mat-cell *matCellDef="let reservation" class="delete">
-          <button mat-icon-button color="warn" aria-label="Delete button" (click)="onClick(reservation)">
+          <button mat-icon-button color="warn" aria-label="Delete button" (click)="onDeleteReservation(reservation)">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
