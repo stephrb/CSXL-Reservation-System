@@ -25,8 +25,13 @@
           <tr>
             <td>{{ reservable.reservable.name }}</td>
             <ng-container *ngFor="let hour of hours">
+<<<<<<< HEAD
               <td *ngIf="isValidDate(hour) && !isAvailable(reservable.reservations, hour)" class="notAvailable"></td>
               <td *ngIf="isValidDate(hour) && isAvailable(reservable.reservations, hour)" class="available" (click) = "onCellClick(hour, reservable.reservable)"></td>
+=======
+              <td *ngIf="!isAvailable(reservable.reservations, hour)" class="notAvailable"></td>
+              <td *ngIf="isAvailable(reservable.reservations, hour)" class="available" (click) = "onCellClick()"></td>
+>>>>>>> origin/3-create-reservation
               <td *ngIf="!isValidDate(hour)" class="invalidDate"></td>
             </ng-container>
           </tr>
