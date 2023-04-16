@@ -1,5 +1,4 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { MatSelectModule } from '@angular/material/select';
 import { Route } from '@angular/router'
 import { Observable, of } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
