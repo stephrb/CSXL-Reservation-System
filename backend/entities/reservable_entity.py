@@ -5,6 +5,11 @@ from .entity_base import EntityBase
 from ..models import Reservable, ReservableForm
 
 class ReservableEntity(EntityBase):
+    """Reservable database entity
+    
+    Attributes:
+        model: base model for conversion between entities and model objects.
+    """
     __tablename__ = "reservable"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -14,6 +19,7 @@ class ReservableEntity(EntityBase):
 
     @classmethod
     def from_model(cls, model: Reservable) -> Self:
+        """Creates an entity from reservable base model."""
         return cls(
             id=model.id,
             name=model.name,
@@ -23,6 +29,7 @@ class ReservableEntity(EntityBase):
     
     @classmethod
     def from_form_model(cls, model: ReservableForm) -> Self:
+        """Creates an entity from reservable form base model."""
         return cls(
             name=model.name,
             type=model.type,
@@ -30,6 +37,7 @@ class ReservableEntity(EntityBase):
         )
 
     def to_model(self) -> Reservable:
+        """Creates a reservable base model object from entity."""
         return Reservable(
             id=self.id,
             name=self.name,
