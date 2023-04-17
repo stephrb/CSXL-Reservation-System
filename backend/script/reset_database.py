@@ -77,10 +77,9 @@ with Session(engine) as session:
     from ..entities import ReservationEntity
     from .dev_data import reservations
     for reservation, reservable, user in reservations.triplets:
-        entity = ReservationEntity.from_model(reservation)
-        entity.reservable = session.get(ReservableEntity, reservable.id)
+        entity = ReservationEntity.from_form_model(reservation)
+        entity.reservable = session.get(ReservableEntity, reservation.reservable_id)
         entity.user = session.get(UserEntity, user.id)
         session.add(entity)
-    session.execute(text(f'ALTER SEQUENCE permission_id_seq RESTART WITH {len(permissions.pairs) + 1}'))
     session.commit()
 

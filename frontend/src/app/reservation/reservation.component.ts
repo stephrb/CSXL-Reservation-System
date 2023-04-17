@@ -1,9 +1,10 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { Route } from '@angular/router'
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
 import { Reservation, ReservationService, Reservable, reservableForm } from './reservation.service';
 import { PermissionService } from '../permission.service';
+import { FormBuilder } from '@angular/forms';
 
 
 @Component({
@@ -16,6 +17,10 @@ export class ReservationComponent {
 
   public selectedDate: Date = new Date();
   public hours: Date[] = [];
+  public selectedStartTime: Date | undefined;
+  public selectedReservable: Reservable | undefined;
+  public selectedEndTime: Date | undefined;
+  public possibleEndTimes$: Observable<Date[]>;
   public reservable_form: reservableForm = {
       name: '',
       type: '',
@@ -27,7 +32,6 @@ export class ReservationComponent {
   public userReservations$: Observable<readonly Reservation[]>;
   public listReservables$: Observable<readonly Reservable[]>;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
-
   public displayedColumns: string[] = ['name', 'type', 'description', 'delete'];
   public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete']
 
@@ -38,16 +42,19 @@ export class ReservationComponent {
     this.checkinPermission$ = this.permission.check('checkin.create', 'checkin/');
     this.adminPermission$ = this.permission.check('admin.view', 'admin/');
     this.userReservations$ = this.reservationService.getUserReservations();
+    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+    this.possibleEndTimes$ = of();
     this.listReservables$ = this.reservationService.getListReservables();
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
   }
+
   public static Route: Route = {
     path: 'reservation',
     component: ReservationComponent, 
     title: 'Reservation', 
   };
 
-  onClick(reservation: Reservation) {
+  onDeleteReservation(reservation: Reservation) {
     if (window.confirm("You are about to delete your reservation for " + reservation.reservable.name + " on " 
       + reservation.start_time.toLocaleString() + " - " + reservation.end_time.toLocaleTimeString())) {
       this.reservationService
@@ -84,7 +91,7 @@ export class ReservationComponent {
     return result;
   }
 
-  isAvailable(reservations: Reservation[], hour: Date, test:any): boolean {
+  isAvailable(reservations: Reservation[], hour: Date): boolean {
     const reservation = reservations.some(reservation => {
       const startHour: Date = new Date(reservation.start_time);
       const endHour: Date = new Date(reservation.end_time);
@@ -93,15 +100,18 @@ export class ReservationComponent {
 
     return !reservation;
   }
-  
-
 
   onDateChange(event: any) {
     this.selectedDate = event.value;
     this.hours = this.getHours(this.selectedDate);
-    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
   }
 
+
+  isValidDate(date: Date): boolean {
+    return date.getTime() > Date.now(); 
+  }
+  
   onDeleteReservable(reservable: Reservable) {
     if (window.confirm("You are about to delete " + reservable.name)) {
       this.reservationService
@@ -135,5 +145,31 @@ export class ReservationComponent {
     }
   }
 
-}
+  onCellClick(date: Date, reservable: Reservable) {
+    this.selectedStartTime = date;
+    this.selectedReservable = reservable;
+    this.possibleEndTimes$ = this.reservationService.getAvailableEndTimes(this.selectedReservable.id, this.selectedStartTime);
+  }
 
+  onCreateReservation() {
+    if(this.selectedReservable && this.selectedStartTime && this.selectedEndTime) {
+       if (window.confirm("Create a reservation for " + this.selectedReservable.name + " on " 
+        + this.selectedStartTime.toLocaleString() + " - " + this.selectedEndTime.toLocaleTimeString() +"?")) {
+          this.reservationService
+          .createReservation(this.selectedStartTime, this.selectedEndTime, this.selectedReservable.id)
+          .subscribe({
+            next: () => {
+              this.userReservations$ = this.reservationService.getUserReservations();
+              this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+              this.selectedReservable = undefined;
+              this.selectedStartTime = undefined; 
+              this.selectedEndTime = undefined;
+              this.cd.detectChanges(); 
+            },
+            error: (err) => this.onError(err)
+          });
+      }
+    }
+  }
+    
+}

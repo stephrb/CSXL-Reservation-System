@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from ..services import ReservationService
-from ..models import Reservation, User, Paginated, PaginationParams, Reservable
+from ..models import Reservation, User, Paginated, PaginationParams, Reservable, ReservationForm
 from .authentication import registered_user
 from datetime import datetime
 
@@ -31,7 +31,29 @@ def delete_reservation(reservation_id: int, res_svc: ReservationService = Depend
      """Deletes a reservation using the given reservation id number."""
      res_svc.delete_reservation(reservation_id)
 
-@api.get("/availability/{reservable_id}", tags=["Reservations"])
+@api.get("/availability/{reservable_id}", response_model=list[Reservation], tags=["Reservations"])
 def get_availability(reservable_id: int, date:datetime, res_svc: ReservationService = Depends()):
      """Lists all of the reservations associated with a reservable using the given reservable id number."""
-     return res_svc.get_reservations_by_reservable(reservable_id, datetime(date.year, date.month, date.day))
+     return res_svc.get_reservations_by_reservable(reservable_id, date)
+
+@api.post("", response_model=Reservation, tags=['Reservations'])
+def create_reservation(
+     reservationForm: ReservationForm,
+     subject: User = Depends(registered_user), 
+     res_svc: ReservationService = Depends()):
+     """Creates a reservation using the associated ReservationForm for the User."""
+     try:
+          reservation = res_svc.create_reservation(reservationForm, subject.id)
+          return reservation
+     except ValueError:
+          raise HTTPException(409, detial='Reservation could not be created due to an overlapping reservation')
+
+@api.get("/end_time/{reservable_id}", response_model=list[datetime], tags=['Reservations'])
+def get_available_end_times(reservable_id: int, start_time: datetime, res_svc: ReservationService = Depends()):
+     """Gets the available end times for a start_time to allow the user to create a reservation."""
+     try:
+          return res_svc.get_available_end_times(reservable_id, start_time)
+     except ValueError:
+          raise HTTPException(422, detail=f'start_time: {start_time} is not a valid time slot like XX:00:00.00 or XX:30:00.00')
+          
+

@@ -17,6 +17,10 @@ table {
     text-align: center;
   }
 
+  .invalidDate {
+    background-color: gray;
+  }
+
   .available {
     background-color: green;
   }
