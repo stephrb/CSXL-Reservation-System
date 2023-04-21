@@ -41,3 +41,9 @@ class ReservableService:
         statement = delete(ReservableEntity).where(ReservableEntity.id==reservable_id)
         self._session.execute(statement)
         self._session.commit()
+
+    def filter_by_type(self, types: list[str]) -> list[Reservable]:
+        """Returns a list of reservables of the given types."""
+        statement = select(ReservableEntity).where(ReservableEntity.type.in_(types))
+        entities = self._session.scalars(statement).all()
+        return [entity.to_model() for entity in entities]

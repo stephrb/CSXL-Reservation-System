@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from ..services import ReservableService, UserPermissionError
 from ..models import Reservable, ReservableForm, User
 from .authentication import registered_user
@@ -25,4 +25,8 @@ def delete(reservable_id: int, subject: User = Depends(registered_user), res_svc
         res_svc.delete(reservable_id=reservable_id, subject=subject)
     except UserPermissionError as e:
         raise HTTPException(status_code=403, detail=str(e))
-
+    
+@api.get("/filter", response_model=list[Reservable], tags=["Reservables"])
+def get_reservables_by_types(types: list[str] | None = Query(None), res_svc: ReservableService = Depends()) -> list[Reservable]:
+    """Gets a list of reservables that have the specified types."""
+    return res_svc.filter_by_type(types)
