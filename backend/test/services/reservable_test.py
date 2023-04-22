@@ -11,7 +11,8 @@ from datetime import datetime, timedelta
 
 reservable = Reservable(id=1, name='Laptop #1', type='Laptop', description='The first laptop')
 reservable_2 = Reservable(id=2, name='Room #1', type='Room', description='Small study room, adjacent to entrance')
-reservable_2_updated = Reservable(id=2, name='Room #2', type='Room', description='The second room')
+reservable_1_updated = Reservable(id=1, name='Room #2', type='Room', description='The second room')
+reservable_2_updated = Reservable(id=2, name="Room #8", type='Room', description='THE 8th ROOM')
 reservable_3 = ReservableForm(name='Laptop #2', type='Laptop', description='The second laptop')
 reservable_3_true = Reservable(id=3, name='Laptop #2', type='Laptop', description='The second laptop')
 
@@ -74,5 +75,10 @@ def test_delete_with_permission_error(reservable_service: ReservableService):
         reservable_service.delete(2, user)
 
 def test_update_reservable(reservable_service: ReservableService):
+    reservable_service.update(reservable_1_updated)
+    assert reservable_service.list_reservables() == [reservable_1_updated, reservable_2]
+
+def test_update_reservable_order(reservable_service: ReservableService):
     reservable_service.update(reservable_2_updated)
-    assert reservable_service.list_reservables() == [reservable, reservable_2_updated]
+    reservable_service.update(reservable_1_updated)
+    assert reservable_service.list_reservables() == [reservable_1_updated, reservable_2_updated]
