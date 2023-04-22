@@ -71,3 +71,12 @@ def test_add_with_permission_error(reservable_service: ReservableService):
 def test_delete_with_permission_error(reservable_service: ReservableService):
     with pytest.raises(UserPermissionError):
         reservable_service.delete(2, user)
+
+def test_filter_by_one_type(reservable_service: ReservableService):
+    assert reservable_service.filter_by_type(["Room"]) == [reservable_2]
+
+def test_filter_by_multiple_types(reservable_service: ReservableService):
+    assert reservable_service.filter_by_type(["Laptop", "Room"]) == [reservable, reservable_2]
+
+def test_filter_by_type_with_no_reservables(reservable_service: ReservableService):
+    assert reservable_service.filter_by_type(["PC"]) == []
