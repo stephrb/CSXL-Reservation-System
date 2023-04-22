@@ -23,7 +23,7 @@ class ReservableService:
 
     def list_reservables(self) -> list[Reservable] | None:
         """Lists all reservables."""
-        statement = select(ReservableEntity)
+        statement = select(ReservableEntity).order_by(ReservableEntity.id.asc())
         entities = self._session.scalars(statement)
         return [entity.to_model() for entity in entities]
     
@@ -49,3 +49,4 @@ class ReservableService:
         values(name = reservable.name, type = reservable.type, description = reservable.description)
         self._session.execute(statement)
         self._session.commit()
+
