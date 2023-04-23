@@ -80,3 +80,10 @@ def test_filter_by_multiple_types(reservable_service: ReservableService):
 
 def test_filter_by_type_with_no_reservables(reservable_service: ReservableService):
     assert reservable_service.filter_by_type(["PC"]) == []
+
+def test_get_types(reservable_service: ReservableService):
+    assert reservable_service.get_types() == ['Room', 'Laptop']
+
+def test_get_types_all_unique(reservable_service: ReservableService):
+    reservable_service.add(reservable_3, root)
+    assert reservable_service.get_types() == ['Room', 'Laptop']
