@@ -28,3 +28,8 @@ def delete(reservable_id: int, subject: User = Depends(registered_user), res_svc
         res_svc.delete(reservable_id=reservable_id, subject=subject)
     except UserPermissionError as e:
         raise HTTPException(status_code=403, detail=str(e))
+    
+@api.get("/types", response_model=list[str], tags=["Reservables"])
+def get_types(res_svc: ReservableService = Depends()):
+    """Gets all unique 'type' fields from the database."""
+    return res_svc.get_types()
