@@ -20,3 +20,5 @@
 - [ ] Verify the UI leads to a clean and accessible user experience
 - [ ] Ensure that the system handles unexpected user inputs and errors gracefully
 - [ ] Test common user workflows and verify that they perform as expected
+- [ ] Ensure that Angular material components are used
+- [ ] Test functionality across different authenticated users
