@@ -44,7 +44,11 @@ class ReservableService:
 
     def update(self, reservable: Reservable):
         """Updates the specified reservable's attribute with the specified update_str."""
-        statement = update(ReservableEntity).where(ReservableEntity.id == reservable.id).values(name = reservable.name, type = reservable.type, description = reservable.description)
+        statement = (update(ReservableEntity)
+        .where(ReservableEntity.id == reservable.id)
+        .values(name = reservable.name, 
+            type = reservable.type, 
+            description = reservable.description))
         self._session.execute(statement)
         self._session.commit()
 
