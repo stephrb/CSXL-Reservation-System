@@ -53,3 +53,4 @@ class ReservableService:
         statement = select(distinct(ReservableEntity.type))
         entities = self._session.scalars(statement).fetchall()
         return [entity for entity in entities]
+        

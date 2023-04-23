@@ -87,3 +87,4 @@ def test_get_types(reservable_service: ReservableService):
 def test_get_types_all_unique(reservable_service: ReservableService):
     reservable_service.add(reservable_3, root)
     assert reservable_service.get_types() == ['Room', 'Laptop']
+
