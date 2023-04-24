@@ -55,8 +55,17 @@ table {
     background-color: gray !important;
     font-weight: bold;
   }
-  
 
+  .select {
+    margin-right: 10px;
+    margin-left: 10px;
+    display: inline-block;
+  }
+
+  .select-container {
+    display: flex;
+  }
+  
   .delete {
     width: 5%;
   }
