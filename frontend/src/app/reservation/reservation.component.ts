@@ -32,7 +32,7 @@ export class ReservationComponent {
   public userReservations$: Observable<readonly Reservation[]>;
   public listReservables$: Observable<readonly Reservable[]>;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
-  public displayedColumns: string[] = ['name', 'type', 'description', 'delete'];
+  public displayedColumns: string[] = ['name', 'type', 'description', 'delete', 'edit'];
   public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete']
 
   constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef

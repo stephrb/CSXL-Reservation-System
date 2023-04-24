@@ -23,7 +23,7 @@
         <tbody>
           <ng-container *ngFor="let reservable of reservablesWithAvailability$ | async">
             <tr>
-              <td class="name">{{ reservable.reservable.name }}</td>
+              <td class="name" matTooltip="{{reservable.reservable.description}}"matTooltipPosition="right">{{ reservable.reservable.name }}</td>
               <ng-container *ngFor="let hour of hours">
                 <td *ngIf="isValidDate(hour) && !isAvailable(reservable.reservations, hour)" class="notAvailable"></td>
                 <td *ngIf="isValidDate(hour) && isAvailable(reservable.reservations, hour)" class="available" (click) = "onCellClick(hour, reservable.reservable)"></td>
@@ -128,7 +128,7 @@
         <div style="display: block;">
           <mat-form-field appearance="fill">
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="reservable_form.description" name="description" >
+            <input matInput [(ngModel)]="reservable_form.description" name="description" required>
           </mat-form-field>
         </div>
       </mat-card-content>
@@ -159,6 +159,15 @@
       <td mat-cell *matCellDef="let reservable" class="delete">
         <button mat-icon-button color="warn" aria-label="Delete button" (click)="onDeleteReservable(reservable)">
           <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="edit">
+      <th mat-header-cell *matHeaderCellDef>Edit</th>
+      <td mat-cell *matCellDef="let reservable" class="edit">
+        <button mat-icon-button color="gray" aria-label="Edit Button">
+          <mat-icon>edit</mat-icon>
         </button>
       </td>
     </ng-container>
