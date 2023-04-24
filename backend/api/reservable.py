@@ -26,3 +26,10 @@ def delete(reservable_id: int, subject: User = Depends(registered_user), res_svc
     except UserPermissionError as e:
         raise HTTPException(status_code=403, detail=str(e))
 
+@api.put("", tags=["Reservables"])
+def update_reservable(reservable: Reservable, res_svc: ReservableService = Depends()):
+    """Updates the reservable fields in the table with the reservable fields given in the reservable parameter."""
+    try:
+        res_svc.update(reservable)
+    except UserPermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
