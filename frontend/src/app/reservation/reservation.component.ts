@@ -79,8 +79,8 @@ export class ReservationComponent {
   }
 
   getHours(date: Date): Date[] {
-    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate()); 
-    const end = new Date(start.getTime() + 24 * 60 * 60 * 1000 - 1); 
+    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 9, 0);
+  const end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 19, 0);
     const timeIncrement = 30 * 60 * 1000; 
     const result: Date[] = [];
     let current = start; 
