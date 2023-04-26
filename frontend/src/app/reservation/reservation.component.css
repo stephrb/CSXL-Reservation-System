@@ -68,4 +68,7 @@ th {
 .edit {
   width: 5%;
 }
-  
+
+.wrap {
+  white-space: pre-wrap;
+}
