@@ -1,5 +1,5 @@
 from fastapi import Depends
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, distinct
 from sqlalchemy.orm import Session
 from ..database import db_session
 from ..models import Reservable, ReservableForm, User
@@ -41,3 +41,16 @@ class ReservableService:
         statement = delete(ReservableEntity).where(ReservableEntity.id==reservable_id)
         self._session.execute(statement)
         self._session.commit()
+
+    def filter_by_type(self, types: list[str]) -> list[Reservable]:
+        """Returns a list of reservables of the given types."""
+        statement = select(ReservableEntity).where(ReservableEntity.type.in_(types))
+        entities = self._session.scalars(statement).all()
+        return [entity.to_model() for entity in entities]
+    
+    def get_types(self) -> list[str]:
+        """Returns a list of all the unique 'type' fields in the reservables database."""
+        statement = select(distinct(ReservableEntity.type))
+        entities = self._session.scalars(statement).fetchall()
+        return [entity for entity in entities]
+        

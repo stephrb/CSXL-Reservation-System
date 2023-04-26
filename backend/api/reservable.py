@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from ..services import ReservableService, UserPermissionError
 from ..models import Reservable, ReservableForm, User
 from .authentication import registered_user
@@ -6,9 +6,12 @@ from .authentication import registered_user
 api = APIRouter(prefix="/api/reservable")
 
 @api.get("", response_model=list[Reservable], tags=["Reservables"])
-def get_reservables(res_svc: ReservableService = Depends()) -> list[Reservable]:
+def list_reservables(types: list[str] | None = Query(None), res_svc: ReservableService = Depends()) -> list[Reservable]:
     """Gets a list of all reservables in the reservable database."""
-    return res_svc.list_reservables()
+    if types == None:
+        return res_svc.list_reservables()
+    else:
+        return res_svc.filter_by_type(types)
 
 @api.post("", response_model=Reservable, tags=["Reservables"])
 def create_reservable(reservable_form: ReservableForm, subject: User = Depends(registered_user), res_svc: ReservableService = Depends()):
@@ -25,4 +28,8 @@ def delete(reservable_id: int, subject: User = Depends(registered_user), res_svc
         res_svc.delete(reservable_id=reservable_id, subject=subject)
     except UserPermissionError as e:
         raise HTTPException(status_code=403, detail=str(e))
-
+    
+@api.get("/types", response_model=list[str], tags=["Reservables"])
+def get_types(res_svc: ReservableService = Depends()):
+    """Gets all unique 'type' fields from the database."""
+    return res_svc.get_types()

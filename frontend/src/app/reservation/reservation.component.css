@@ -25,6 +25,11 @@ table {
     background-color: green;
   }
 
+  .available:hover {
+    background-color: lightgreen;
+    cursor:pointer;
+  }
+
   .notAvailable {
     background-color: red;
   }
@@ -34,6 +39,33 @@ table {
     overflow-x: auto;
   }
 
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    border: 1px solid white !important;
+    padding: 8px;
+    text-align: center !important;
+    vertical-align: middle;
+  }
+  
+  th {
+    background-color: gray !important;
+    font-weight: bold;
+  }
+
+  .select {
+    margin-right: 10px;
+    margin-left: 10px;
+    display: inline-block;
+  }
+
+  .select-container {
+    display: flex;
+  }
+  
   .delete {
     width: 5%;
   }
