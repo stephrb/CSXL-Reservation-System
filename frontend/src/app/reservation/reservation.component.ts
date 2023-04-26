@@ -4,7 +4,6 @@ import { Observable, of } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
 import { Reservation, ReservationService, Reservable, reservableForm } from './reservation.service';
 import { PermissionService } from '../permission.service';
-import { FormBuilder } from '@angular/forms';
 
 
 @Component({
@@ -33,7 +32,8 @@ export class ReservationComponent {
   public listReservables$: Observable<readonly Reservable[]>;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
   public displayedColumns: string[] = ['name', 'type', 'description', 'delete', 'edit'];
-  public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete']
+  public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete'];
+  public editRow: number = -1;
 
   constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef
   ){
@@ -170,6 +170,31 @@ export class ReservationComponent {
           });
       }
     }
+  }
+
+  isEdit(reservable_id: number) {
+    return reservable_id == this.editRow;
+  }
+
+  onEditClick(reservable_id: number) {
+    this.editRow = reservable_id; 
+  }
+
+  onSaveEdits(id: number, name: string, type: string, description: string) {
+    const reservable: Reservable = { id, name, type, description };
+    if (window.confirm("Update " + reservable.name + "?")) {
+          this.reservationService
+          .updateReservable(reservable)
+          .subscribe({
+            next: () => {
+              this.listReservables$ = this.reservationService.getListReservables();
+              this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+              this.cd.detectChanges(); 
+            },
+            error: (err) => this.onError(err)
+          });
+    }
+    this.editRow = -1;
   }
     
 }

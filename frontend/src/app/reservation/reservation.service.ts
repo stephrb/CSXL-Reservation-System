@@ -59,8 +59,8 @@ export class ReservationService {
 
   getAvailability(reservable_id: number, date: Date): Observable<Reservation[]> {
     let params = new HttpParams().set('date', date.toISOString());
-  let url = "/api/reservation/availability/" + reservable_id;
-  return this.http.get<Reservation[]>(url, { params });
+    let url = "/api/reservation/availability/" + reservable_id;
+    return this.http.get<Reservation[]>(url, { params });
   }
 
   getReservablesWithAvailability(date: Date): Observable<{ reservable: Reservable, reservations: Reservation[] }[]> {
@@ -100,10 +100,14 @@ export class ReservationService {
   }
 
   deleteReservable(reservable_id: number): Observable<void> {
-    return this.http.delete<void>("/api/reservable/" + reservable_id)
+    return this.http.delete<void>("/api/reservable/" + reservable_id);
   }
 
   createReservable(reservable_form: reservableForm): Observable<Reservable> {
-    return this.http.post<Reservable>("/api/reservable", reservable_form)
+    return this.http.post<Reservable>("/api/reservable", reservable_form);
+  }
+
+  updateReservable(reservable: Reservable) {
+    return this.http.put<Reservable>("/api/reservable", reservable);
   }
 }

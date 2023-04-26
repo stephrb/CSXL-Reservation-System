@@ -23,7 +23,7 @@
         <tbody>
           <ng-container *ngFor="let reservable of reservablesWithAvailability$ | async">
             <tr>
-              <td class="name" matTooltip="{{reservable.reservable.description}}"matTooltipPosition="right">{{ reservable.reservable.name }}</td>
+              <td class="name" matTooltip="{{reservable.reservable.description}}" matTooltipPosition="right">{{ reservable.reservable.name }}</td>
               <ng-container *ngFor="let hour of hours">
                 <td *ngIf="isValidDate(hour) && !isAvailable(reservable.reservations, hour)" class="notAvailable"></td>
                 <td *ngIf="isValidDate(hour) && isAvailable(reservable.reservations, hour)" class="available" (click) = "onCellClick(hour, reservable.reservable)"></td>
@@ -141,17 +141,38 @@
   <table mat-table [dataSource]="listReservables$">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let reservable">{{ reservable.name }}</td>
+      <td mat-cell *matCellDef="let reservable">
+        <div *ngIf="!isEdit(reservable.id)">{{ reservable.name }}</div>
+        <div *ngIf="isEdit(reservable.id)">
+          <mat-form-field appearance="fill">
+            <input matInput type="text" [(ngModel)]="reservable.name">
+          </mat-form-field>
+        </div>
+      </td>
     </ng-container>
   
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef>Type</th>
-      <td mat-cell *matCellDef="let reservable">{{ reservable.type }}</td>
+      <td mat-cell *matCellDef="let reservable">
+        <div *ngIf="!isEdit(reservable.id)">{{ reservable.type }}</div>
+        <div *ngIf="isEdit(reservable.id)">
+          <mat-form-field appearance="fill">
+            <input matInput type="text" [(ngModel)]="reservable.type">
+          </mat-form-field>
+        </div>
+      </td>
     </ng-container>
   
     <ng-container matColumnDef="description">
       <th mat-header-cell *matHeaderCellDef>Description</th>
-      <td mat-cell *matCellDef="let reservable">{{ reservable.description }}</td>
+      <td mat-cell *matCellDef="let reservable">
+        <div *ngIf="!isEdit(reservable.id)">{{ reservable.description }}</div>
+        <div *ngIf="isEdit(reservable.id)">
+          <mat-form-field appearance="fill">
+            <input matInput type="text" [(ngModel)]="reservable.description">
+          </mat-form-field>
+        </div>
+      </td>
     </ng-container>
   
     <ng-container class="delete" matColumnDef="delete">
@@ -166,9 +187,16 @@
     <ng-container class="edit" matColumnDef="edit">
       <th mat-header-cell *matHeaderCellDef>Edit</th>
       <td mat-cell *matCellDef="let reservable" class="edit">
-        <button mat-icon-button color="gray" aria-label="Edit Button">
+        <div *ngIf="!isEdit(reservable.id)">
+          <button mat-icon-button color="gray" aria-label="Edit Button" (click)="onEditClick(reservable.id)">
           <mat-icon>edit</mat-icon>
         </button>
+        </div>
+        <div *ngIf="isEdit(reservable.id)">
+          <button mat-icon-button color="gray" aria-label="Save Edits" (click)="onSaveEdits(reservable.id, reservable.name, reservable.type, reservable.description)">
+            <mat-icon>save</mat-icon>
+          </button>
+        </div>
       </td>
     </ng-container>
   
