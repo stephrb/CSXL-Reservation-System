@@ -1,40 +1,74 @@
 table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  
-  thead, td {
-    text-align: center;
-    padding: 8px;
-    border: 1px solid #ddd;
-  }
-  
-  thead {
-    background-color: gray;
-  }
+  border-collapse: collapse;
+  width: 100%;
+}
 
-  h2{
-    text-align: center;
-  }
+thead, td {
+  text-align: center;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
 
-  .invalidDate {
-    background-color: gray;
-  }
+thead {
+  background-color: gray;
+}
 
-  .available {
-    background-color: green;
-  }
+h2{
+  text-align: center;
+}
 
-  .notAvailable {
-    background-color: red;
-  }
+.invalidDate {
+  background-color: gray;
+}
 
-  .table-container {
-    width: 100%; 
-    overflow-x: auto;
-  }
+.available {
+  background-color: green;
+}
 
-  .delete {
-    width: 5%;
-  }
+.available:hover {
+  background-color: lightgreen;
+  cursor:pointer;
+}
 
+.notAvailable {
+  background-color: red;
+}
+
+.table-container {
+  width: 100%; 
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid white !important;
+  padding: 8px;
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+th {
+  background-color: gray !important;
+  font-weight: bold;
+}
+
+
+.delete {
+  width: 5%;
+}
+
+.name {
+  width: 15%;
+}
+
+.edit {
+  width: 5%;
+}
+
+.wrap {
+  white-space: pre-wrap;
+}
