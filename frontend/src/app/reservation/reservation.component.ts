@@ -33,7 +33,7 @@ export class ReservationComponent {
   public listReservables$: Observable<readonly Reservable[]>;
   public editRow: number = -1;
   public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>;
-  public displayedColumns: string[] = ['name', 'type', 'description', 'delete'];
+  public displayedColumns: string[] = ['name', 'type', 'description', 'delete', 'edit'];
   public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete'];
   public selectedTypes: FormControl = new FormControl([]);
   public possibleTypes$: Observable<string[]>
