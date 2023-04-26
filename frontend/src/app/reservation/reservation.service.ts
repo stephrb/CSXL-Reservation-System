@@ -53,8 +53,16 @@ export class ReservationService {
     return this.http.get<Reservable>("/api/reservation/" +  reservation_id);
   }
 
-  getListReservables(): Observable<Reservable[]> {
-    return this.http.get<Reservable[]>("/api/reservable")
+  getListReservables(types?: string[]): Observable<Reservable[]> {
+    let params = new HttpParams();
+    if(types) {
+      types.forEach(type => { params = params.append('types', type); });
+    }
+    return this.http.get<Reservable[]>('/api/reservable', { params });
+  }
+
+  getReservableTypes(): Observable<string[]>{
+    return this.http.get<string[]>('/api/reservable/types');
   }
 
   getAvailability(reservable_id: number, date: Date): Observable<Reservation[]> {
@@ -63,8 +71,8 @@ export class ReservationService {
     return this.http.get<Reservation[]>(url, { params });
   }
 
-  getReservablesWithAvailability(date: Date): Observable<{ reservable: Reservable, reservations: Reservation[] }[]> {
-    return this.getListReservables().pipe(
+  getReservablesWithAvailability(date: Date, types?: string[]): Observable<{ reservable: Reservable, reservations: Reservation[] }[]> {
+    return this.getListReservables(types).pipe(
       switchMap(reservables => {
         const availabilityObservables = reservables.map(reservable => {
           return this.getAvailability(reservable.id, date).pipe(

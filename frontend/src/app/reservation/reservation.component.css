@@ -1,74 +1,84 @@
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  thead, td {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  thead {
+    background-color: gray;
+  }
 
-thead, td {
-  text-align: center;
-  padding: 8px;
-  border: 1px solid #ddd;
-}
+  h2{
+    text-align: center;
+  }
 
-thead {
-  background-color: gray;
-}
+  .invalidDate {
+    background-color: gray;
+  }
 
-h2{
-  text-align: center;
-}
+  .available {
+    background-color: green;
+  }
 
-.invalidDate {
-  background-color: gray;
-}
+  .available:hover {
+    background-color: lightgreen;
+    cursor:pointer;
+  }
 
-.available {
-  background-color: green;
-}
+  .notAvailable {
+    background-color: red;
+  }
 
-.available:hover {
-  background-color: lightgreen;
-  cursor:pointer;
-}
+  .table-container {
+    width: 100%; 
+    overflow-x: auto;
+  }
 
-.notAvailable {
-  background-color: red;
-}
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    border: 1px solid white !important;
+    padding: 8px;
+    text-align: center !important;
+    vertical-align: middle;
+  }
+  
+  th {
+    background-color: gray !important;
+    font-weight: bold;
+  }
 
-.table-container {
-  width: 100%; 
-  overflow-x: auto;
-}
+  .select {
+    margin-right: 10px;
+    margin-left: 10px;
+    display: inline-block;
+  }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th, td {
-  border: 1px solid white !important;
-  padding: 8px;
-  text-align: center !important;
-  vertical-align: middle;
-}
-
-th {
-  background-color: gray !important;
-  font-weight: bold;
-}
-
-
-.delete {
-  width: 5%;
-}
-
-.name {
+  .select-container {
+    display: flex;
+  }
+  
+  .delete {
+    width: 5%;
+  }
+  
+  .name {
   width: 15%;
-}
+  }
 
-.edit {
+  .edit {
   width: 5%;
-}
+  }
 
-.wrap {
+  .wrap {
   white-space: pre-wrap;
-}
+  }
+  

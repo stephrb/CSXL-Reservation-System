@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { Profile, ProfileService } from '../profile/profile.service';
 import { Reservation, ReservationService, Reservable, reservableForm } from './reservation.service';
 import { PermissionService } from '../permission.service';
+import { FormControl } from '@angular/forms';
 
 
 @Component({
@@ -30,10 +31,12 @@ export class ReservationComponent {
   public adminPermission$: Observable<boolean>;
   public userReservations$: Observable<readonly Reservation[]>;
   public listReservables$: Observable<readonly Reservable[]>;
-  public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>
-  public displayedColumns: string[] = ['name', 'type', 'description', 'delete', 'edit'];
-  public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete'];
   public editRow: number = -1;
+  public reservablesWithAvailability$: Observable<{ reservable: Reservable, reservations: Reservation[] }[]>;
+  public displayedColumns: string[] = ['name', 'type', 'description', 'delete'];
+  public reservationColumns: string[] = ['date', 'time', 'reservation', 'type', 'description', 'delete'];
+  public selectedTypes: FormControl = new FormControl([]);
+  public possibleTypes$: Observable<string[]>
 
   constructor( public profileService: ProfileService, public reservationService: ReservationService, private permission: PermissionService, private cd: ChangeDetectorRef
   ){
@@ -44,8 +47,8 @@ export class ReservationComponent {
     this.userReservations$ = this.reservationService.getUserReservations();
     this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
     this.possibleEndTimes$ = of();
-    this.listReservables$ = this.reservationService.getListReservables();
-    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+    this.possibleTypes$ = this.reservationService.getReservableTypes();
+    this.listReservables$ = this.reservationService.getListReservables(); 
   }
 
   public static Route: Route = {
@@ -53,6 +56,18 @@ export class ReservationComponent {
     component: ReservationComponent, 
     title: 'Reservation', 
   };
+
+  ngOnInit() {
+    this.selectedTypes.valueChanges.subscribe((newTypes) => {
+      console.log("You changed types!! Printing newTypes...");
+      console.log(newTypes)
+      if(newTypes.length == 0) { 
+        this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+      } else {
+        this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate, this.selectedTypes.value);
+      }
+    });
+  }
 
   onDeleteReservation(reservation: Reservation) {
     if (window.confirm("You are about to delete your reservation for " + reservation.reservable.name + " on " 
@@ -104,9 +119,8 @@ export class ReservationComponent {
   onDateChange(event: any) {
     this.selectedDate = event.value;
     this.hours = this.getHours(this.selectedDate);
-    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+    this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate, this.selectedTypes.value);
   }
-
 
   isValidDate(date: Date): boolean {
     return date.getTime() > Date.now(); 
@@ -119,7 +133,8 @@ export class ReservationComponent {
         .subscribe({
           next: () => {
             this.listReservables$ = this.reservationService.getListReservables();
-            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+            this.possibleTypes$ = this.reservationService.getReservableTypes();
             this.cd.detectChanges();
           },
           error: (err) => this.onError(err)
@@ -134,7 +149,8 @@ export class ReservationComponent {
         .subscribe({
           next: () => {
             this.listReservables$ = this.reservationService.getListReservables();
-            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate)
+            this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+            this.possibleTypes$ = this.reservationService.getReservableTypes();
             this.cd.detectChanges();
             reservable_form.name = '';
             reservable_form.type = '';
@@ -160,7 +176,7 @@ export class ReservationComponent {
           .subscribe({
             next: () => {
               this.userReservations$ = this.reservationService.getUserReservations();
-              this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+              this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate, this.selectedTypes.value);
               this.selectedReservable = undefined;
               this.selectedStartTime = undefined; 
               this.selectedEndTime = undefined;
@@ -189,6 +205,7 @@ export class ReservationComponent {
             next: () => {
               this.listReservables$ = this.reservationService.getListReservables();
               this.reservablesWithAvailability$ = this.reservationService.getReservablesWithAvailability(this.selectedDate);
+              this.possibleTypes$ = this.reservationService.getReservableTypes();
               this.cd.detectChanges(); 
             },
             error: (err) => this.onError(err)
@@ -196,5 +213,6 @@ export class ReservationComponent {
     }
     this.editRow = -1;
   }
+
     
 }

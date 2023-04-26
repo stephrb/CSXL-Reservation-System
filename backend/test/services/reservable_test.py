@@ -82,3 +82,20 @@ def test_update_reservable_order(reservable_service: ReservableService):
     reservable_service.update(reservable_2_updated)
     reservable_service.update(reservable_1_updated)
     assert reservable_service.list_reservables() == [reservable_1_updated, reservable_2_updated]
+
+def test_filter_by_one_type(reservable_service: ReservableService):
+    assert reservable_service.filter_by_type(["Room"]) == [reservable_2]
+
+def test_filter_by_multiple_types(reservable_service: ReservableService):
+    assert reservable_service.filter_by_type(["Laptop", "Room"]) == [reservable, reservable_2]
+
+def test_filter_by_type_with_no_reservables(reservable_service: ReservableService):
+    assert reservable_service.filter_by_type(["PC"]) == []
+
+def test_get_types(reservable_service: ReservableService):
+    assert reservable_service.get_types() == ['Room', 'Laptop']
+
+def test_get_types_all_unique(reservable_service: ReservableService):
+    reservable_service.add(reservable_3, root)
+    assert reservable_service.get_types() == ['Room', 'Laptop']
+
