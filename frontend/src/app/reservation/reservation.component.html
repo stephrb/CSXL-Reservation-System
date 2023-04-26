@@ -116,19 +116,19 @@
         <div style="display: block;">
           <mat-form-field appearance="fill">
             <mat-label>Name</mat-label>
-            <input matInput [(ngModel)]="reservable_form.name" name="name" required>
+            <input matInput [(ngModel)]="reservable_form.name" name="name" required maxlength="32">
           </mat-form-field>
         </div>
         <div style="display: block;">
           <mat-form-field appearance="fill">
             <mat-label>Type</mat-label>
-            <input matInput [(ngModel)]="reservable_form.type" name="type" required>
+            <input matInput [(ngModel)]="reservable_form.type" name="type" required maxlength="32">
           </mat-form-field>
         </div>
         <div style="display: block;">
           <mat-form-field appearance="fill">
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="reservable_form.description" name="description" required>
+            <input matInput [(ngModel)]="reservable_form.description" name="description" required maxlength="100">
           </mat-form-field>
         </div>
       </mat-card-content>
@@ -145,7 +145,7 @@
         <div *ngIf="!isEdit(reservable.id)">{{ reservable.name }}</div>
         <div *ngIf="isEdit(reservable.id)">
           <mat-form-field appearance="fill">
-            <input matInput type="text" [(ngModel)]="reservable.name">
+            <input matInput type="text" [(ngModel)]="reservable.name" maxlength="32">
           </mat-form-field>
         </div>
       </td>
@@ -157,7 +157,7 @@
         <div *ngIf="!isEdit(reservable.id)">{{ reservable.type }}</div>
         <div *ngIf="isEdit(reservable.id)">
           <mat-form-field appearance="fill">
-            <input matInput type="text" [(ngModel)]="reservable.type">
+            <input matInput type="text" [(ngModel)]="reservable.type" maxlength="32">
           </mat-form-field>
         </div>
       </td>
@@ -169,7 +169,7 @@
         <div *ngIf="!isEdit(reservable.id)">{{ reservable.description }}</div>
         <div *ngIf="isEdit(reservable.id)">
           <mat-form-field appearance="fill">
-            <input matInput type="text" [(ngModel)]="reservable.description">
+            <input matInput type="text" [(ngModel)]="reservable.description" maxlength="100">
           </mat-form-field>
         </div>
       </td>
