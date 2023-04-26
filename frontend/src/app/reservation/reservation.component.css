@@ -1,4 +1,4 @@
-table {
+  table {
     border-collapse: collapse;
     width: 100%;
   }
@@ -69,4 +69,16 @@ table {
   .delete {
     width: 5%;
   }
+  
+  .name {
+  width: 15%;
+  }
 
+  .edit {
+  width: 5%;
+  }
+
+  .wrap {
+  white-space: pre-wrap;
+  }
+  

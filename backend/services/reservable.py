@@ -1,5 +1,5 @@
 from fastapi import Depends
-from sqlalchemy import select, delete, distinct
+from sqlalchemy import select, delete, update, distinct
 from sqlalchemy.orm import Session
 from ..database import db_session
 from ..models import Reservable, ReservableForm, User
@@ -23,7 +23,7 @@ class ReservableService:
 
     def list_reservables(self) -> list[Reservable] | None:
         """Lists all reservables."""
-        statement = select(ReservableEntity)
+        statement = select(ReservableEntity).order_by(ReservableEntity.id.asc())
         entities = self._session.scalars(statement)
         return [entity.to_model() for entity in entities]
     
@@ -39,6 +39,16 @@ class ReservableService:
         """Deletes a reservable given that the User has proper permissions."""
         self._permission.enforce(subject, 'reservable.delete', f'reservable/{reservable_id}')
         statement = delete(ReservableEntity).where(ReservableEntity.id==reservable_id)
+        self._session.execute(statement)
+        self._session.commit()
+
+    def update(self, reservable: Reservable):
+        """Updates the specified reservable's attribute with the specified update_str."""
+        statement = (update(ReservableEntity)
+        .where(ReservableEntity.id == reservable.id)
+        .values(name = reservable.name, 
+            type = reservable.type, 
+            description = reservable.description))
         self._session.execute(statement)
         self._session.commit()
 

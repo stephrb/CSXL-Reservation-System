@@ -28,8 +28,17 @@ def delete(reservable_id: int, subject: User = Depends(registered_user), res_svc
         res_svc.delete(reservable_id=reservable_id, subject=subject)
     except UserPermissionError as e:
         raise HTTPException(status_code=403, detail=str(e))
+
+@api.put("", tags=["Reservables"])
+def update_reservable(reservable: Reservable, res_svc: ReservableService = Depends()):
+    """Updates the reservable fields in the table with the reservable fields given in the reservable parameter."""
+    try:
+        res_svc.update(reservable)
+    except UserPermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
     
 @api.get("/types", response_model=list[str], tags=["Reservables"])
 def get_types(res_svc: ReservableService = Depends()):
     """Gets all unique 'type' fields from the database."""
     return res_svc.get_types()
+
