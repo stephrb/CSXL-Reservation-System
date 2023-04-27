@@ -12,7 +12,7 @@
   }
   
   .tab-content {
-    height: 87vh;
+    height: 85vh;
     overflow-y: scroll;
   }
 
@@ -99,3 +99,8 @@
   white-space: pre-wrap;
   }
   
+  @media only screen and (max-height: 740px) {
+    .tab-content {
+      height: 82vh;
+    }
+  }
