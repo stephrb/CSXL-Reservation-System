@@ -13,14 +13,14 @@ The Reservation page has three tabs:
 **Accessing Reservations Feature:**
 View the deployed site at [team-f4-comp423-23s.apps.cloudapps.unc.edu](https://team-f4-comp423-23s.apps.cloudapps.unc.edu). Once at the site, register or sign in, since only registered users can access our feature. If attempting to view the admin features, be sure to sign in with an admin account. Then, click "Reservations" on the sidebar to navigate to the Reservations page.  
 
-## Implementation Notes
+## Design Decisions
 In our system, we have two databases; one for Reservables and one for Reservations. The Reservable database contains an entity for each piece of equipment/room that the CSXL offers for reservation, which itself contains information on the reservable in the form of a name, type, and description for the equipment/room. The Reservation database contains entities for reservations that users have made, which each entity containing a start time and end time for the reservation, a reservable id number which links to the Reservable database, and a User id number which links to the User database.
 
 We chose to format the databases in this way because we thought that by linking the databases together by using the ID numbers would be faster and save more memory than putting whole Reservable or User objects into the Reservation database. Also, by enabling a cascade-on-delete feature, the reservation entities will all delete themselves if the associated reservable is deleted. We also left most of the displaying methods up to the frontend, opting to return full lists of reservables and reservations, and sort through them depending on frontend form inputs.
 
 We borrowed much of the design ideas for the availability table from the Davis Library reservation system, because we thought that it was a clean and simple way for the user to be able to make decisions while being able to see a full list of reservables and their reservations that have already been made. The choices of green and red coloring are to emphasize this depiction of "already reserved" and "available".
 
-## Development Concerns
+## Getting Started on Feature Development
 **Relevant Files:**
 - backend/
     -   api/
@@ -70,9 +70,11 @@ Once the application is running, navigate to [localhost:1560/docs](http://localh
 **Accessing App Locally:**
 Once the application is running, navigate to [localhost:1560/](http://localhost:1560/) in the browser to view the site. To access the site authenticated as Merritt Managaer, use this url: [localhost:1560/auth/as/merritt/100000002](http://localhost:1560/auth/as/merritt/100000002). To access the site authenticated as Sol Student, use this url: [localhost:1560/auth/as/sol/100000000](http://localhost:1560/auth/as/sol/100000000).
 
-## Future Work
+## Future Development Directions
 As of now, students can make as many reservations as they want and as far in advance as they would like. However, we are worried that students could abuse the Reservations feature by making too many reservations, preventing other students from using the CSXL. We also are worried that students who make reservations far in the future may forget about their reservation and not show up. This prevents students from fully utilizing the resources that the CSXL has to offer, so we plan on limiting students to reserving one to two weeks in the future. Another implementation could be providing club leaders with priority to make reservations for rooms and equipment. We could give clubs priority by allowing them to reserve further in the future than other students or by increasing their number of allowed reservations. 
 
 In the future, we also hope to add more functionality for admins of the CSXL. As mentioned above, we hope to alter the amount of reservations students can make and the length of time in advance that students can make reservations. In the future, admins should be able to edit the limits on reservations. Currently, all equipment is available 24/7, but in actuality, the CSXL is probably not open all day. Admins should be able to change the hours in which students can reserve equipment and rooms to match the hours of the CSXL.
 
 Currently, the UI for the Edit Reservables tab seems a bit clunky since we recently added a way to edit reservables directly in the table. In the future, we hope to combine these, so that adding a reservable is also part of the table, leading to an overall cleaner feel and better user experience. 
+
+Currently the API has support for retrieving reservation history with the `/api/reservation?upcoming=false` API route. In the future we want to implement a user view for this display.
