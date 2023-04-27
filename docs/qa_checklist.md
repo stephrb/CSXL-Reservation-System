@@ -11,10 +11,7 @@
 - [ ] Ensure that the API endpoints return appropriate HTTP status codes
 - [ ] Verify that the response payloads for API endpoints follow a consistent format
 ## Frontend
-- [ ] Ensure appropriate documentation and style according to the Angular style guide (https://angular.io/guide/styleguide)
-  - [ ] Properly comment components and functions.
-  - [ ] Use consistent naming conventions for variables, functions, and components.
-  - [ ] Follow the Single Responsibility Principle and ensure each component has a clear and distinct purpose.
+- [ ] Use consistent naming conventions for variables, functions, and components.
 - [ ] Implement error handling to provide meaningful and clear error messages to the user.
 - [ ] Ensure the reservation system integrates well with the existing website layout and design.
 - [ ] Verify the UI leads to a clean and accessible user experience
