@@ -3,9 +3,12 @@
 The Reservation page allows students and organizations to reserve equipment and rooms in the CSXL. This feature ensures that there is a fair system for sharing equipment in the CSXL, and it ensures that there are no overlapping reservations. 
 
 The Reservation page has three tabs: 
-* **Reserve:** See equipment and room availability on a given day, and create reservations.
-* **My Reservations:**: See your upcoming reservations and delete your upcoming reservaitons. 
-* **Edit Reservables** (Admin Only)**:** View, add, and delete existing equipment or rooms from the Reservations page.
+* **Reserve:** See equipment and room availability on a given day that is filtered by a certain type, and create a reservation.
+![Reserve Sol View](images/sol_reserve.png)
+* **My Reservations:**: See and delete your upcoming reservaitons. 
+![Reservations Sol View](images/sol_reservations.png)
+* **Edit Reservables** (Admin Only)**:** View, add, edit, and delete existing equipment or rooms from the Reservations page.
+![Reservables Merritt View](images/merritt.png)
 
 **Accessing Reservations Feature:**
 View the deployed site at [team-f4-comp423-23s.apps.cloudapps.unc.edu](https://team-f4-comp423-23s.apps.cloudapps.unc.edu). Once at the site, register or sign in, since only registered users can access our feature. If attempting to view the admin features, be sure to sign in with an admin account. Then, click "Reservations" on the sidebar to navigate to the Reservations page.  
