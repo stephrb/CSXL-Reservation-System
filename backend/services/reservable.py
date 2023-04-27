@@ -1,12 +1,18 @@
 from fastapi import Depends
-from sqlalchemy import select
+from sqlalchemy import select, delete, update, distinct
 from sqlalchemy.orm import Session
 from ..database import db_session
-from ..models import Reservable
+from ..models import Reservable, ReservableForm, User
 from ..entities import ReservableEntity
 from .permission import PermissionService
 
 class ReservableService:
+    """Service for handling/mutating reservable objects and reservable database.
+    
+    Attributes:
+        reservable_form: RservableForm base model to add to database.
+        reservable_id: Reservable object id from database.
+    """
 
     _session: Session
     _permission: PermissionService
@@ -16,6 +22,45 @@ class ReservableService:
         self._permission = permission
 
     def list_reservables(self) -> list[Reservable] | None:
-        statement = select(ReservableEntity)
+        """Lists all reservables."""
+        statement = select(ReservableEntity).order_by(ReservableEntity.id.asc())
         entities = self._session.scalars(statement)
         return [entity.to_model() for entity in entities]
+    
+    def add(self, reservable_form: ReservableForm, subject: User):
+        """Adds a reservable given that the User has proper permissions."""
+        self._permission.enforce(subject, 'reservable.add', 'reservable/')
+        new_entity: ReservableEntity = ReservableEntity.from_form_model(reservable_form)
+        self._session.add(new_entity)
+        self._session.commit()
+        return new_entity.to_model()
+    
+    def delete(self, reservable_id: int, subject: User):
+        """Deletes a reservable given that the User has proper permissions."""
+        self._permission.enforce(subject, 'reservable.delete', f'reservable/{reservable_id}')
+        statement = delete(ReservableEntity).where(ReservableEntity.id==reservable_id)
+        self._session.execute(statement)
+        self._session.commit()
+
+    def update(self, reservable: Reservable):
+        """Updates the specified reservable's attribute with the specified update_str."""
+        statement = (update(ReservableEntity)
+        .where(ReservableEntity.id == reservable.id)
+        .values(name = reservable.name, 
+            type = reservable.type, 
+            description = reservable.description))
+        self._session.execute(statement)
+        self._session.commit()
+
+    def filter_by_type(self, types: list[str]) -> list[Reservable]:
+        """Returns a list of reservables of the given types."""
+        statement = select(ReservableEntity).where(ReservableEntity.type.in_(types))
+        entities = self._session.scalars(statement).all()
+        return [entity.to_model() for entity in entities]
+    
+    def get_types(self) -> list[str]:
+        """Returns a list of all the unique 'type' fields in the reservables database."""
+        statement = select(distinct(ReservableEntity.type))
+        entities = self._session.scalars(statement).fetchall()
+        return [entity for entity in entities]
+        

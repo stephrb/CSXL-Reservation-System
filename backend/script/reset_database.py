@@ -69,7 +69,7 @@ with Session(engine) as session:
 
     to_entity = entities.ReservableEntity.from_model
     session.add_all([to_entity(model) for model in reservables.models])
-    session.execute(text(f'ALTER SEQUENCE {entities.ReservableEntity.__table__}_id_seq RESTART WITH {len(users.models) + 1}'))
+    session.execute(text(f'ALTER SEQUENCE {entities.ReservableEntity.__table__}_id_seq RESTART WITH {len(reservables.models) + 1}'))
     session.commit()
 
 # Add Reservations
@@ -77,10 +77,9 @@ with Session(engine) as session:
     from ..entities import ReservationEntity
     from .dev_data import reservations
     for reservation, reservable, user in reservations.triplets:
-        entity = ReservationEntity.from_model(reservation)
-        entity.reservable = session.get(ReservableEntity, reservable.id)
+        entity = ReservationEntity.from_form_model(reservation)
+        entity.reservable = session.get(ReservableEntity, reservation.reservable_id)
         entity.user = session.get(UserEntity, user.id)
         session.add(entity)
-    session.execute(text(f'ALTER SEQUENCE permission_id_seq RESTART WITH {len(permissions.pairs) + 1}'))
     session.commit()
 

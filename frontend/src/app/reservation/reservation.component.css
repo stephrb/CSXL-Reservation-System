@@ -1,6 +1,23 @@
-table {
+  table {
     border-collapse: collapse;
     width: 100%;
+  }
+
+  .tab label {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+  
+  .tab-content {
+    height: 85vh;
+    overflow-y: scroll;
+  }
+
+  mat-tab {
+    overflow: hidden;
   }
   
   thead, td {
@@ -17,11 +34,73 @@ table {
     text-align: center;
   }
 
+  .invalidDate {
+    background-color: gray;
+  }
+
   .available {
     background-color: green;
+  }
+
+  .available:hover {
+    background-color: lightgreen;
+    cursor:pointer;
   }
 
   .notAvailable {
     background-color: red;
   }
 
+  .table-container {
+    width: 100%; 
+    overflow-x: auto;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    border: 1px solid white !important;
+    padding: 8px;
+    text-align: center !important;
+    vertical-align: middle;
+  }
+  
+  th {
+    background-color: gray !important;
+    font-weight: bold;
+  }
+
+  .select {
+    margin-right: 10px;
+    margin-left: 10px;
+    display: inline-block;
+  }
+
+  .select-container {
+    display: flex;
+  }
+  
+  .delete {
+    width: 5%;
+  }
+  
+  .name {
+  width: 15%;
+  }
+
+  .edit {
+  width: 5%;
+  }
+
+  .wrap {
+  white-space: pre-wrap;
+  }
+  
+  @media only screen and (max-height: 740px) {
+    .tab-content {
+      height: 82vh;
+    }
+  }

@@ -26,7 +26,11 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms'; // Import FormsModule here
+
 
 /* Application Specific */
 import { AppRoutingModule } from './app-routing.module';
@@ -71,7 +75,10 @@ import { ReservationComponent } from './reservation/reservation.component';
     MatToolbarModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSelectModule,
+    MatTableModule,
     FormsModule,
+    MatTooltipModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: () => {

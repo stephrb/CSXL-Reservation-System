@@ -17,6 +17,12 @@ export interface Reservable {
     description: string
 }
 
+export interface reservableForm {
+    name:	string
+    type:	string
+    description: string | null
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -47,18 +53,26 @@ export class ReservationService {
     return this.http.get<Reservable>("/api/reservation/" +  reservation_id);
   }
 
-  getListReservables(): Observable<Reservable[]> {
-    return this.http.get<Reservable[]>("/api/reservable")
+  getListReservables(types?: string[]): Observable<Reservable[]> {
+    let params = new HttpParams();
+    if(types) {
+      types.forEach(type => { params = params.append('types', type); });
+    }
+    return this.http.get<Reservable[]>('/api/reservable', { params });
+  }
+
+  getReservableTypes(): Observable<string[]>{
+    return this.http.get<string[]>('/api/reservable/types');
   }
 
   getAvailability(reservable_id: number, date: Date): Observable<Reservation[]> {
     let params = new HttpParams().set('date', date.toISOString());
-  let url = "/api/reservation/availability/" + reservable_id;
-  return this.http.get<Reservation[]>(url, { params });
+    let url = "/api/reservation/availability/" + reservable_id;
+    return this.http.get<Reservation[]>(url, { params });
   }
 
-  getReservablesWithAvailability(date: Date): Observable<{ reservable: Reservable, reservations: Reservation[] }[]> {
-    return this.getListReservables().pipe(
+  getReservablesWithAvailability(date: Date, types?: string[]): Observable<{ reservable: Reservable, reservations: Reservation[] }[]> {
+    return this.getListReservables(types).pipe(
       switchMap(reservables => {
         const availabilityObservables = reservables.map(reservable => {
           return this.getAvailability(reservable.id, date).pipe(
@@ -70,10 +84,38 @@ export class ReservationService {
         return forkJoin(availabilityObservables);
       })
     );
-}
+  }
   
-
   deleteReservation(reservation_id: number): Observable<void> {
     return this.http.delete<void>("/api/reservation/" + reservation_id);
+  }
+
+  getAvailableEndTimes(reservable_id: number, start_time: Date): Observable<Date[]> {
+    let params = new HttpParams().set('start_time', start_time.toISOString());
+    let url = "/api/reservation/end_time/" + reservable_id;
+    return this.http.get<string[]>(url, { params }).pipe(
+      map((dates: string[]) => dates.map(date => new Date(Date.parse(date))))
+    );
+  }
+
+  createReservation(start_time: Date, end_time: Date, reservable_id: number): Observable<Reservation> {
+    let body = {
+      start_time: start_time.toISOString(),
+      end_time: end_time.toISOString(),
+      reservable_id: reservable_id
+    }
+    return this.http.post<Reservation>("/api/reservation", body);
+  }
+
+  deleteReservable(reservable_id: number): Observable<void> {
+    return this.http.delete<void>("/api/reservable/" + reservable_id);
+  }
+
+  createReservable(reservable_form: reservableForm): Observable<Reservable> {
+    return this.http.post<Reservable>("/api/reservable", reservable_form);
+  }
+
+  updateReservable(reservable: Reservable) {
+    return this.http.put<Reservable>("/api/reservable", reservable);
   }
 }
