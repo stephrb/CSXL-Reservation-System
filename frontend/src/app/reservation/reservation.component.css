@@ -2,6 +2,23 @@
     border-collapse: collapse;
     width: 100%;
   }
+
+  .tab label {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+  
+  .tab-content {
+    height: 85vh;
+    overflow-y: scroll;
+  }
+
+  mat-tab {
+    overflow: hidden;
+  }
   
   thead, td {
     text-align: center;
@@ -82,3 +99,8 @@
   white-space: pre-wrap;
   }
   
+  @media only screen and (max-height: 740px) {
+    .tab-content {
+      height: 82vh;
+    }
+  }
